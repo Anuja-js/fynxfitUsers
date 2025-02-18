@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "172131937774",
+    "project_id": "fynxfit",
+    "storage_bucket": "fynxfit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172131937774:android:18828926b8b869e42eb2ff",
+        "android_client_info": {
+          "package_name": "com.example.fynxfitusers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172131937774-qviqsf018oea6qk1jnrkjhe7mrv5a9qr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyihQzGF_EYXSdky84x2k-_4Thnw4l440"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172131937774-qviqsf018oea6qk1jnrkjhe7mrv5a9qr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "172131937774-v75cibvf7p35r06ca6t3k3fvjg73e18v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fynxfituser"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
