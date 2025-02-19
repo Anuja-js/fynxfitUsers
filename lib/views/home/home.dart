@@ -10,26 +10,26 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hoursProvider =
-    StateProvider<List<double>>((ref) => [2.5, 3.8, 2.1, 3.2, 2.7, 1.4]);
+        StateProvider<List<double>>((ref) => [2.5, 3.8, 2.1, 3.2, 2.7, 1.4]);
     final currentDateProvider =
-    StateProvider<DateTime>((ref) => DateTime.now());
+        StateProvider<DateTime>((ref) => DateTime.now());
     final recommendationsProvider =
-    StateProvider<List<Map<String, dynamic>>>((ref) => [
-      {
-        'title': 'Squat Exercise',
-        'subtitle': 'Beginner Guide',
-        'duration': '15 min',
-        'image': 'assets/images/squat.jpg',
-        'isFavorite': true,
-      },
-      {
-        'title': 'Full Body Stretching',
-        'subtitle': 'Intermediate',
-        'duration': '20 min',
-        'image': 'assets/images/stretching.jpg',
-        'isFavorite': false,
-      },
-    ]);
+        StateProvider<List<Map<String, dynamic>>>((ref) => [
+              {
+                'title': 'Squat Exercise',
+                'subtitle': 'Beginner Guide',
+                'duration': '15 min',
+                'image': 'assets/images/squats.png',
+                'isFavorite': true,
+              },
+              {
+                'title': 'Full Body Stretching',
+                'subtitle': 'Intermediate',
+                'duration': '20 min',
+                'image': 'assets/images/squats.png',
+                'isFavorite': false,
+              },
+            ]);
 
     final hours = ref.watch(hoursProvider);
     final currentDate = ref.watch(currentDateProvider);
@@ -140,7 +140,8 @@ class HomeScreen extends ConsumerWidget {
                       series: <ChartSeries>[
                         LineSeries<ChartData, String>(
                           dataSource: List.generate(hours.length, (index) {
-                            return ChartData((index + 12).toString(), hours[index]);
+                            return ChartData(
+                                (index + 12).toString(), hours[index]);
                           }),
                           xValueMapper: (ChartData data, _) => data.day,
                           yValueMapper: (ChartData data, _) => data.hours,
@@ -160,9 +161,12 @@ class HomeScreen extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildNavItem(Icons.fitness_center, 'Workout', Colors.purple[300]!),
-                  _buildNavItem(Icons.insert_chart, 'Progress\nTracking', Colors.white),
-                  _buildNavItem(Icons.restaurant_menu, 'Nutrition', Colors.white),
+                  _buildNavItem(
+                      Icons.fitness_center, 'Workout', Colors.purple[300]!),
+                  _buildNavItem(
+                      Icons.insert_chart, 'Progress\nTracking', Colors.white),
+                  _buildNavItem(
+                      Icons.restaurant_menu, 'Nutrition', Colors.white),
                   _buildNavItem(Icons.people, 'Coaches', Colors.white),
                 ],
               ),
@@ -187,7 +191,8 @@ class HomeScreen extends ConsumerWidget {
                           fontSize: 12,
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+                      Icon(Icons.arrow_forward_ios,
+                          size: 12, color: Colors.grey),
                     ],
                   ),
                 ],
@@ -270,6 +275,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildNavItem(IconData icon, String label, Color color) {
     return Column(
       children: [
@@ -290,7 +296,6 @@ class HomeScreen extends ConsumerWidget {
       ],
     );
   }
-
 }
 
 class ChartData {

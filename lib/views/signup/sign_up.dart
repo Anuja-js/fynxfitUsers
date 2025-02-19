@@ -1,12 +1,9 @@
-import 'package:country_flags/country_flags.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/core/utils/constants.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
-import 'package:fynxfituser/views/home/home.dart';
-import 'package:fynxfituser/views/onboading/profileonboading/profile_onboading_one.dart';
+import 'package:fynxfituser/views/home/main_screen.dart';
 import 'package:fynxfituser/views/signup/email_password_sign_up.dart';
 import 'package:fynxfituser/views/signup/phone_otp_sign_up.dart';
 
@@ -57,7 +54,7 @@ class SignUp extends ConsumerWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreen()),
+                                builder: (context) => MainScreen()),
                           );
                         }
                       },
