@@ -43,8 +43,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const ForgotPasswordScreen())),
                 child: const Text("Forgot Password?"),
               ),
             ),
@@ -52,33 +54,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             isLoading
                 ? const CircularProgressIndicator()
                 : SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CustomElevatedButton(
-                text: "Login",
-                backgroundColor: Colors.blue,
-                onPressed: () async {
-                  setState(() => isLoading = true);
-                  final error = await authViewModel.signInWithEmail(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                  setState(() => isLoading = false);
+                    width: MediaQuery.of(context).size.width,
+                    child: CustomElevatedButton(
+                      text: "Login",
+                      backgroundColor: Colors.blue,
+                      onPressed: () async {
+                        setState(() => isLoading = true);
+                        final error = await authViewModel.signInWithEmail(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+                        setState(() => isLoading = false);
 
-                  if (error == null) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (ctx) => ProfileSelectionScreen(),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(error)),
-                    );
-                  }
-                },
-              ),
-            ),
+                        if (error == null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => ProfileSelectionScreen(),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(error)),
+                          );
+                        }
+                      },
+                    ),
+                  ),
             const SizedBox(height: 10),
             SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -110,7 +112,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 },
               ),
             ),
-
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CustomElevatedButton(
