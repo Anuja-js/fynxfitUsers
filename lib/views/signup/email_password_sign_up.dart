@@ -21,7 +21,7 @@ class EmailPasswordSignUp extends ConsumerWidget {
     final _confirmPasswordController = ref.watch(confirmPasswordControllerProvider);
 
     final isPasswordVisible = ref.watch(passwordVisibilityProvider);
-    final authViewModel = ref.read(authViewModelProvider.notifier);
+    final authViewModel = ref.read(authProvider.notifier);
     final passViewModel = ref.read(passwordVisibilityProvider.notifier);
 
     return Scaffold(

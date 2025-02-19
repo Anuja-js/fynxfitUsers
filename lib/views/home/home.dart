@@ -8,8 +8,8 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authViewModel = ref.read(authViewModelProvider.notifier);
-    final user = ref.watch(authViewModelProvider);
+    final authViewModel = ref.read(authProvider.notifier);
+    final user = ref.watch(authProvider);
 
     return Scaffold(
       appBar: AppBar(

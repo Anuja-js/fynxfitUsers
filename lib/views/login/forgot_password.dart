@@ -17,7 +17,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authViewModel = ref.read(authViewModelProvider.notifier);
+    final authViewModel = ref.read(authProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Forgot Password")),

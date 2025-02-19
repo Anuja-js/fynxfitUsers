@@ -7,6 +7,7 @@ import 'package:fynxfituser/core/utils/constants.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
 import 'package:fynxfituser/views/onboading/profileonboading/profile_onboading_one.dart';
 import 'package:fynxfituser/views/signup/email_password_sign_up.dart';
+import 'package:fynxfituser/views/signup/phone_otp_sign_up.dart';
 
 import '../../theme.dart';
 import '../../widgets/custom_images.dart';
@@ -18,9 +19,8 @@ class SignUp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final authViewModel = ref.read(authViewModelProvider.notifier);
-    final user = ref.watch(authViewModelProvider);
+    final authViewModel = ref.read(authProvider.notifier);
+    final user = ref.watch(authProvider);
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
@@ -48,37 +48,51 @@ class SignUp extends ConsumerWidget {
               child: Form(
                 child: Column(
                   children: [
-                    SignUpBoxes(authViewModel: authViewModel,onTap:
-                    () async {
-                  await authViewModel.signInWithGoogle();
-                  if (ref.read(authViewModelProvider) != null) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  ProfileSelectionScreen()),
-                    );
-                  }
-                }, text: 'Create Account Using Google', image: 'assets/images/google.png',),
-
+                    SignUpBoxes(
+                      authViewModel: authViewModel,
+                      onTap: () async {
+                        await authViewModel.signInWithGoogle();
+                        if (ref.read(authProvider) != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileSelectionScreen()),
+                          );
+                        }
+                      },
+                      text: 'Create Account Using Google',
+                      image: 'assets/images/google.png',
+                    ),
                     CustomText(
                       text: "or",
                       color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
                     ),
-                    SignUpBoxes(authViewModel: authViewModel,onTap:
-                    () async {
+                    SignUpBoxes(
+                      authViewModel: authViewModel,
+                      onTap: () async {
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext ctx){
+                          return PhoneOtpSignUp();
+                        }));
 
-                }, text: 'Create Account Using PhoneNumber', image: 'assets/images/phone.png',),
-
+                      },
+                      text: 'Create Account Using PhoneNumber',
+                      image: 'assets/images/phone.png',
+                    ),
                     CustomText(
                       text: "or",
                       color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
                     ),
-                    SignUpBoxes(authViewModel: authViewModel,onTap:
-                        () {Navigator.push(context, MaterialPageRoute(builder: (BuildContext ctx){
+                    SignUpBoxes(
+                      authViewModel: authViewModel,
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext ctx) {
                           return EmailPasswordSignUp();
                         }));
-                    }, text: 'Create Account Using Email', image: 'assets/images/email.png',),
-
-
+                      },
+                      text: 'Create Account Using Email',
+                      image: 'assets/images/email.png',
+                    ),
                     CustomText(
                       text: "or",
                       color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
@@ -93,7 +107,6 @@ class SignUp extends ConsumerWidget {
       ),
     );
   }
-
 }
 
 class LoginWidget extends StatelessWidget {
@@ -118,8 +131,8 @@ class LoginWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10.sp,
                 fontWeight: FontWeight.bold,
-                color: AppThemes.darkTheme.appBarTheme
-                    .foregroundColor, // Title in white
+                color: AppThemes
+                    .darkTheme.appBarTheme.foregroundColor, // Title in white
               ),
             ),
             TextSpan(
@@ -140,10 +153,13 @@ class LoginWidget extends StatelessWidget {
 class SignUpBoxes extends StatelessWidget {
   String image;
   String text;
- GestureTapCallback onTap;
-   SignUpBoxes({
+  GestureTapCallback onTap;
+  SignUpBoxes({
     super.key,
-    required this.authViewModel,required this.image,required this.text,required this.onTap,
+    required this.authViewModel,
+    required this.image,
+    required this.text,
+    required this.onTap,
   });
 
   final AuthViewModel authViewModel;
@@ -154,13 +170,11 @@ class SignUpBoxes extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: GestureDetector(
         onTap: onTap,
-
-        child: Container(padding: EdgeInsets.all(8),
+        child: Container(
+          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-              color: AppThemes
-                  .darkTheme.appBarTheme.foregroundColor,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(8.r))),
+              color: AppThemes.darkTheme.appBarTheme.foregroundColor,
+              borderRadius: BorderRadius.all(Radius.circular(8.r))),
           child: Row(
             children: [
               CustomImages(
@@ -173,12 +187,10 @@ class SignUpBoxes extends StatelessWidget {
               Expanded(
                 child: CustomText(
                   textAlign: TextAlign.end,
-                  color:
-                      AppThemes.darkTheme.scaffoldBackgroundColor,
+                  color: AppThemes.darkTheme.scaffoldBackgroundColor,
                   fontWeight: FontWeight.normal,
                   fontSize: 15,
-                  text:text,
-
+                  text: text,
                 ),
               ),
             ],

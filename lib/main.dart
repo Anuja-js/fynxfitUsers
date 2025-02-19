@@ -5,9 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/firebase_options.dart';
 import 'package:fynxfituser/poviders/theme_provider.dart';
 import 'package:fynxfituser/views/splash/splash.dart';
-
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

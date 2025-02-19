@@ -20,7 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authViewModel = ref.read(authViewModelProvider.notifier);
+    final authViewModel = ref.read(authProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
@@ -83,7 +83,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CustomElevatedButton(
-                text: "Sign in with Google",
+                text: "Login with Google",
+                backgroundColor: Colors.red,
+                onPressed: () async {
+                  final error = await authViewModel.signInWithGoogle();
+                  if (error != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(error)),
+                    );
+                  }
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: CustomElevatedButton(
+                text: "Logout",
+                backgroundColor: Colors.red,
+                onPressed: () async {
+                  await authViewModel.signOut();
+                  // if (error != null) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(content: Text(error)),
+                  //   );
+                  // }
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: CustomElevatedButton(
+                text: "Login with PhoneNumber",
                 backgroundColor: Colors.red,
                 onPressed: () async {
                   final error = await authViewModel.signInWithGoogle();
