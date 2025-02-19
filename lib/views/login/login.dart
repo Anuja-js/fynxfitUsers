@@ -110,6 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 },
               ),
             ),
+
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CustomElevatedButton(
