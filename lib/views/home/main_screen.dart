@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/views/home/home.dart';
+import 'package:fynxfituser/views/profile/profile.page.dart';
 
 import '../../poviders/bottom_nav_provider.dart';
 
@@ -8,22 +9,14 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavProvider);
-
-    // List of screens corresponding to each tab
     final List<Widget> screens = [
-      HomeScreen(),
-      HomeScreen(),
-      HomeScreen(),
-      HomeScreen(),
-      HomeScreen(),
+      const HomeScreen(),
+      const HomeScreen(),
+      const HomeScreen(),
+      const HomeScreen(),
+      const ProfileScreen(),
 
-      // WorkoutScreen(),
-      // DashboardScreen(),
-      // FavoritesScreen(),
-      // ChatScreen(),
-      // ProfileScreen(),
     ];
-
     return Scaffold(
       body: screens[currentIndex],
       bottomNavigationBar: BottomNavigationBar(

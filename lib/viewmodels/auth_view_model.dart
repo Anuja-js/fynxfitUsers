@@ -69,7 +69,6 @@ class AuthViewModel extends StateNotifier<User?> {
     }
   }
 
-  /// Send OTP to phone number (Now Returns a `Future<bool>`)
 
 
   Future<bool> sendOtp(String phoneNumber, BuildContext context) async {

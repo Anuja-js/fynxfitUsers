@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fynxfituser/theme.dart';
+import 'package:fynxfituser/views/home/home.dart';
 import 'package:fynxfituser/views/login/forgot_password.dart';
-import 'package:fynxfituser/views/onboading/profileonboading/profile_onboading_one.dart';
+import '../../core/utils/constants.dart';
 import '../../viewmodels/auth_view_model.dart';
+import '../../widgets/custom_text.dart';
 import '../../widgets/custom_text_form_field.dart';
 import '../../widgets/custom_elevated_button.dart';
+import '../profile/profileonboading/profile_onboading.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authViewModel = ref.read(authProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title:  CustomText(text: "Login",fontSize: 15.sp,),),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -33,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               hintText: "Enter Your Email",
             ),
-            const SizedBox(height: 10),
+            sh10,
             CustomTextFormField(
               controller: _passwordController,
               keyboardType: TextInputType.text,
@@ -50,14 +55,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: const Text("Forgot Password?"),
               ),
             ),
-            const SizedBox(height: 20),
+           Spacer(),
             isLoading
                 ? const CircularProgressIndicator()
                 : SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: CustomElevatedButton(
-                      text: "Login",
-                      backgroundColor: Colors.blue,
+                      text: "Login",textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+                      backgroundColor: AppThemes.darkTheme.primaryColor,
                       onPressed: () async {
                         setState(() => isLoading = true);
                         final error = await authViewModel.signInWithEmail(
@@ -70,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (ctx) => ProfileSelectionScreen(),
+                              builder: (ctx) => ProfileOnboadingOne(),
                             ),
                           );
                         } else {
@@ -81,14 +86,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       },
                     ),
                   ),
-            const SizedBox(height: 10),
+           sh10,
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CustomElevatedButton(
-                text: "Login with Google",
-                backgroundColor: Colors.red,
+                text: "Login with Google",textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+                backgroundColor: AppThemes.darkTheme.primaryColor,
                 onPressed: () async {
                   final error = await authViewModel.signInWithGoogle();
+Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext ctx){
+  return HomeScreen();
+}));
                   if (error != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(error)),
@@ -97,26 +105,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 },
               ),
             ),
+            sh10,
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: CustomElevatedButton(
-                text: "Logout",
-                backgroundColor: Colors.red,
-                onPressed: () async {
-                  await authViewModel.signOut();
-                  // if (error != null) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text(error)),
-                  //   );
-                  // }
-                },
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CustomElevatedButton(
-                text: "Login with PhoneNumber",
-                backgroundColor: Colors.red,
+                text: "Login with PhoneNumber",textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+                backgroundColor: AppThemes.darkTheme.primaryColor,
                 onPressed: () async {
                   final error = await authViewModel.signInWithGoogle();
                   if (error != null) {

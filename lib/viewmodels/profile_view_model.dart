@@ -41,28 +41,15 @@ class ProfileState {
   }
 }
 
+/// ViewModel
 class ProfileViewModel extends StateNotifier<ProfileState> {
   ProfileViewModel() : super(ProfileState());
 
-  void updateGender(String gender) {
-    state = state.copyWith(gender: gender);
-  }
-
-  void updateBirthday(DateTime birthday) {
-    state = state.copyWith(birthday: birthday);
-  }
-
-  void updateWeight(double weight) {
-    state = state.copyWith(weight: weight);
-  }
-
-  void updateHeight(double height) {
-    state = state.copyWith(height: height);
-  }
-
-  void updateFitnessGoal(String goal) {
-    state = state.copyWith(fitnessGoal: goal);
-  }
+  void updateGender(String gender) => state = state.copyWith(gender: gender);
+  void updateBirthday(DateTime birthday) => state = state.copyWith(birthday: birthday);
+  void updateWeight(double weight) => state = state.copyWith(weight: weight);
+  void updateHeight(double height) => state = state.copyWith(height: height);
+  void updateFitnessGoal(String goal) => state = state.copyWith(fitnessGoal: goal);
 
   Future<void> uploadProfileImage(File imageFile) async {
     final storageRef = FirebaseStorage.instance.ref().child('profile_images/${DateTime.now()}.jpg');
@@ -71,3 +58,4 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
     state = state.copyWith(profileImageUrl: downloadUrl);
   }
 }
+

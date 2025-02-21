@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/core/utils/constants.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
-import 'package:fynxfituser/views/home/main_screen.dart';
 import 'package:fynxfituser/views/signup/email_password_sign_up.dart';
 import 'package:fynxfituser/views/signup/phone_otp_sign_up.dart';
 
@@ -11,6 +10,7 @@ import '../../theme.dart';
 import '../../widgets/custom_images.dart';
 import '../../widgets/custom_text.dart';
 import '../login/login.dart';
+import '../profile/profileonboading/profile_onboading.dart';
 
 class SignUp extends ConsumerWidget {
   const SignUp({super.key});
@@ -54,7 +54,7 @@ class SignUp extends ConsumerWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MainScreen()),
+                                builder: (context) =>ProfileOnboadingOne()),
                           );
                         }
                       },

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fynxfituser/core/utils/constants.dart';
+import 'package:fynxfituser/views/login/login.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
-import 'package:fynxfituser/views/signup/sign_up.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -38,25 +39,9 @@ class HomeScreen extends ConsumerWidget {
     final user = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await authViewModel.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const SignUp()),
-              );
-            },
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
@@ -72,17 +57,24 @@ class HomeScreen extends ConsumerWidget {
                       child: Row(
                         children: [
                           Icon(Icons.search, color: Colors.grey),
-                          SizedBox(width: 8),
+                       sw10,
                           Text('Search for Workouts, Diet Plans...',
                               style: TextStyle(color: Colors.grey)),
-                          Spacer(),
-                          Icon(Icons.mic, color: Colors.grey),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Icon(Icons.notifications, color: Colors.white),
+                  Icon(Icons.notifications, color: Colors.white),sw10,
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    onPressed: () async {
+                      await authViewModel.signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
