@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/utils/constants.dart';
 import '../../../poviders/transaction_provider.dart';
 import '../../../widgets/custom_text.dart';
 
@@ -61,7 +62,7 @@ class TransactionHistoryPage extends ConsumerWidget {
                     color: Colors.red,
                   ),
                 ),
-                SizedBox(width: 8),
+                sw10,
                 Icon(Icons.chevron_right, color: Colors.grey),
               ],
             ),

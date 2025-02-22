@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAyihQzGF_EYXSdky84x2k-_4Thnw4l440',
-    appId: '1:172131937774:android:8ecc4908bd24d6a02eb2ff',
+    appId: '1:172131937774:android:18828926b8b869e42eb2ff',
     messagingSenderId: '172131937774',
     projectId: 'fynxfit',
     storageBucket: 'fynxfit.firebasestorage.app',

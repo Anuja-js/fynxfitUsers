@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fynxfituser/views/home/main_screen.dart';
 import 'package:fynxfituser/views/profile/profile.page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fynxfituser/viewmodels/profile_view_model.dart';
@@ -11,9 +12,15 @@ import '../../../theme.dart';
 import '../../../widgets/custom_elevated_button.dart';
 import '../../../widgets/custom_text.dart';
 
-class ProfileImage extends ConsumerWidget {
+class ProfileImage extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _ProfileImageState createState() => _ProfileImageState();
+}
+
+class _ProfileImageState extends ConsumerState<ProfileImage> {
+  XFile? imageFile;
+  @override
+  Widget build(BuildContext context) {
     final profileState = ref.watch(profileViewModelProvider);
     final profileViewModel = ref.read(profileViewModelProvider.notifier);
 
@@ -38,60 +45,124 @@ class ProfileImage extends ConsumerWidget {
             ),
             Expanded(
               child: Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                        radius: 70.r,
-                        backgroundColor: AppThemes.darkTheme.primaryColor,
-                        backgroundImage: profileState.profileImageUrl.isNotEmpty
-                            ? NetworkImage(profileState.profileImageUrl)
-                            : AssetImage("assets/images/logo_white.png")),
-                    Positioned(
-                      bottom: 30,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () =>
-                            showImagePicker(context, profileViewModel),
-                        child: CircleAvatar(
-                          radius: 11.r,
-                          backgroundColor:
-                              AppThemes.darkTheme.appBarTheme.foregroundColor,
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: AppThemes.darkTheme.scaffoldBackgroundColor,
-                            size: 20,
+                child: imageFile == null
+                    ? Stack(
+                        children: [
+                          CircleAvatar(
+                              radius: 70.r,
+                              backgroundColor: AppThemes.darkTheme.primaryColor,
+                              backgroundImage: profileState
+                                      .profileImageUrl.isNotEmpty
+                                  ? NetworkImage(profileState.profileImageUrl)
+                                  : AssetImage("assets/images/logo_white.png")),
+                          Positioned(
+                            bottom: 30,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  showImagePicker(context, profileViewModel),
+                              child: CircleAvatar(
+                                radius: 11.r,
+                                backgroundColor: AppThemes
+                                    .darkTheme.appBarTheme.foregroundColor,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: AppThemes
+                                      .darkTheme.scaffoldBackgroundColor,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
+                      )
+                    : Stack(
+                        children: [
+                          Container(
+                            width: 140.w,
+                            height: 140.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                color: AppThemes.darkTheme.primaryColor,
+                                width: 2, // Adjust thickness
+                              ),
+                              image: DecorationImage(
+                                image: FileImage(File(imageFile!.path)),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 30,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  showImagePicker(context, profileViewModel),
+                              child: CircleAvatar(
+                                radius: 11.r,
+                                backgroundColor: AppThemes
+                                    .darkTheme.appBarTheme.foregroundColor,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  color: AppThemes
+                                      .darkTheme.scaffoldBackgroundColor,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+              ),
+            ),
+            if (imageFile == null)
+              Column(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: CustomElevatedButton(
+                      backgroundColor: AppThemes.darkTheme.primaryColor,
+                      textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+                      text: "Add a Photo",
+                      onPressed: () =>
+                          showImagePicker(context, profileViewModel),
                     ),
-                  ],
+                  ),
+                  sh10,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: CustomElevatedButton(
+                      backgroundColor:
+                          AppThemes.darkTheme.appBarTheme.foregroundColor!,
+                      textColor: AppThemes.darkTheme.dividerColor,
+                      text: "Skip",
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return MainScreen();
+                        }));
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            if (imageFile != null)
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: CustomElevatedButton(
+                  backgroundColor:
+                      AppThemes.darkTheme.appBarTheme.foregroundColor!,
+                  textColor: AppThemes.darkTheme.dividerColor,
+                  text: "Next",
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (BuildContext context) {
+                          return MainScreen();
+                    }));
+                  },
                 ),
               ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CustomElevatedButton(
-                backgroundColor: AppThemes.darkTheme.primaryColor,
-                textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
-                text: "Add a Photo",
-                onPressed: () => showImagePicker(context, profileViewModel),
-              ),
-            ),
-            sh10,
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CustomElevatedButton(
-                backgroundColor:
-                    AppThemes.darkTheme.appBarTheme.foregroundColor!,
-                textColor: AppThemes.darkTheme.dividerColor,
-                text: "Skip",
-                onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-                return ProfileScreen();
-              }));
-                },
-              ),
-            ),
           ],
         ),
       ),
@@ -101,7 +172,8 @@ class ProfileImage extends ConsumerWidget {
   void showImagePicker(BuildContext context, ProfileViewModel viewModel) {
     showModalBottomSheet(
       context: context,
-      backgroundColor:AppThemes.darkTheme.scaffoldBackgroundColor.withOpacity(0.7),
+      backgroundColor:
+          AppThemes.darkTheme.scaffoldBackgroundColor.withOpacity(0.7),
       isScrollControlled: true,
       builder: (context) {
         return Container(
@@ -121,9 +193,10 @@ class ProfileImage extends ConsumerWidget {
                   text: "Take a Photo",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  pickImage(ImageSource.camera, viewModel);
+                  imageFile = await pickImage(ImageSource.camera, viewModel);
+                  setState(() {});
                 },
               ),
               ListTile(
@@ -133,9 +206,10 @@ class ProfileImage extends ConsumerWidget {
                   text: "Choose from Gallery",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  pickImage(ImageSource.gallery, viewModel);
+                  imageFile = await pickImage(ImageSource.gallery, viewModel);
+                  setState(() {});
                 },
               ),
             ],
@@ -145,11 +219,12 @@ class ProfileImage extends ConsumerWidget {
     );
   }
 
-  Future<void> pickImage(
+  Future<XFile?> pickImage(
       ImageSource source, ProfileViewModel viewModel) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       viewModel.uploadProfileImage(File(pickedFile.path));
     }
+    return pickedFile;
   }
 }

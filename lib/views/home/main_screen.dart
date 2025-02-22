@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fynxfituser/models/message.dar.dart';
 import 'package:fynxfituser/views/home/home.dart';
+import 'package:fynxfituser/views/message/message.dart';
 import 'package:fynxfituser/views/profile/profile.page.dart';
 
 import '../../poviders/bottom_nav_provider.dart';
@@ -13,8 +15,8 @@ class MainScreen extends ConsumerWidget {
       const HomeScreen(),
       const HomeScreen(),
       const HomeScreen(),
-      const HomeScreen(),
-      const ProfileScreen(),
+    MessagedUsersListScreen(),
+       ProfileScreen(),
 
     ];
     return Scaffold(

@@ -11,7 +11,8 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(
+      child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -22,7 +23,7 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
 
     return ScreenUtilInit(
-      designSize: Size(375, 812),
+      designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {

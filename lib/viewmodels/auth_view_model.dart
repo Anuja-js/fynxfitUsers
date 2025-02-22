@@ -5,12 +5,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../views/signup/otp_verification_screen.dart';
 
-/// Authentication ViewModel Provider
 final authProvider = StateNotifierProvider<AuthViewModel, User?>((ref) {
   return AuthViewModel();
 });
 
-/// Authentication ViewModel
 class AuthViewModel extends StateNotifier<User?> {
   AuthViewModel() : super(FirebaseAuth.instance.currentUser) {
     _authStateListener();
@@ -34,8 +32,9 @@ class AuthViewModel extends StateNotifier<User?> {
       );
       state = userCredential.user;
       return null; // Success
-    } on FirebaseAuthException catch (e) {
-      return e.message ?? "An unknown error occurred"; // Return error message
+    } catch (e) {
+      state =_auth.currentUser;
+      return null;  // Return error message
     }
   }
 
@@ -55,7 +54,8 @@ class AuthViewModel extends StateNotifier<User?> {
       state = userCredential.user;
       return null; // Success
     } catch (e) {
-      return "Google Sign-In Failed: $e";
+      // return "";
+      // return "Google Sign-In Failed: $e";
     }
   }
 

@@ -12,9 +12,10 @@ import '../../viewmodels/profile_view_model.dart';
 import '../../widgets/custom_text.dart';
 
 class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
-
+  XFile? imageFile;
+   ProfileScreen({Key? key}) : super(key: key);
   @override
+
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(profileViewModelProvider);
     final profileViewModel = ref.read(profileViewModelProvider.notifier);
@@ -33,12 +34,12 @@ class ProfileScreen extends ConsumerWidget {
                 sh10,
                 Stack(
                   children: [
-                    CircleAvatar(
+                    if(imageFile!=null)Image.file(File(imageFile!.path.toString())),
+                    if(imageFile==null) CircleAvatar(
                         radius: 50.r,
                         backgroundColor: AppThemes.darkTheme.primaryColor,
-                        backgroundImage: profileState.profileImageUrl.isNotEmpty
-                            ? NetworkImage(profileState.profileImageUrl)
-                            : AssetImage("assets/images/logo_white.png")),
+                        backgroundImage:
+                             AssetImage("assets/images/logo_white.png")),
                     Positioned(
                       bottom: 30,
                       right: 0,
@@ -182,9 +183,9 @@ class ProfileScreen extends ConsumerWidget {
                   text: "Take a Photo",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  pickImage(ImageSource.camera, viewModel);
+                  imageFile=await pickImage(ImageSource.camera, viewModel);
                 },
               ),
               ListTile(
@@ -194,9 +195,9 @@ class ProfileScreen extends ConsumerWidget {
                   text: "Choose from Gallery",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  pickImage(ImageSource.gallery, viewModel);
+                  imageFile=await pickImage(ImageSource.gallery, viewModel);
                 },
               ),
             ],
@@ -206,11 +207,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> pickImage(ImageSource source, ProfileViewModel viewModel) async {
+  Future pickImage(ImageSource source, ProfileViewModel viewModel) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       viewModel.uploadProfileImage(File(pickedFile.path));
     }
+    return pickedFile;
   }
 
   Widget buildStatItem(String value, String label) {

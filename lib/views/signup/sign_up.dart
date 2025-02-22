@@ -61,21 +61,21 @@ class SignUp extends ConsumerWidget {
                       text: 'Create Account Using Google',
                       image: 'assets/images/google.png',
                     ),
-                    CustomText(
-                      text: "or",
-                      color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
-                    ),
-                    SignUpBoxes(
-                      authViewModel: authViewModel,
-                      onTap: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext ctx){
-                          return PhoneOtpSignUp();
-                        }));
-
-                      },
-                      text: 'Create Account Using PhoneNumber',
-                      image: 'assets/images/phone.png',
-                    ),
+                    // CustomText(
+                    //   text: "or",
+                    //   color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
+                    // ),
+                    // SignUpBoxes(
+                    //   authViewModel: authViewModel,
+                    //   onTap: () async {
+                    //     Navigator.push(context, MaterialPageRoute(builder: (BuildContext ctx){
+                    //       return PhoneOtpSignUp();
+                    //     }));
+                    //
+                    //   },
+                    //   text: 'Create Account Using PhoneNumber',
+                    //   image: 'assets/images/phone.png',
+                    // ),
                     CustomText(
                       text: "or",
                       color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
@@ -91,10 +91,7 @@ class SignUp extends ConsumerWidget {
                       text: 'Create Account Using Email',
                       image: 'assets/images/email.png',
                     ),
-                    CustomText(
-                      text: "or",
-                      color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
-                    ),
+
                   ],
                 ),
               ),
