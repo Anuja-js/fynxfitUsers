@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../theme.dart';
 import '../../../viewmodels/profile_view_model.dart';
-import '../../../widgets/custom_elevated_button.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 class HeightScreen extends ConsumerStatefulWidget {
   final PageController? controller;
@@ -130,6 +130,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
               isCmUnit: isCmUnit,
             ),
 
+
             SizedBox(height: 40.h),
 
             // Height Display
@@ -168,13 +169,14 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 backgroundColor: AppThemes.darkTheme.primaryColor,
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                 text: "Next",
-                onPressed: () {
+                onPressed: () async {viewModel.updateHeight(selectedHeight);
                   widget.controller?.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
                 },
               ),
+
             ),
           ],
         ),

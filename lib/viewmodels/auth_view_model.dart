@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-import '../views/signup/otp_verification_screen.dart';
 
 final authProvider = StateNotifierProvider<AuthViewModel, User?>((ref) {
   return AuthViewModel();
@@ -15,34 +13,68 @@ class AuthViewModel extends StateNotifier<User?> {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  /// Listen to authentication state changes
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _authStateListener() {
     _auth.authStateChanges().listen((user) {
-      state = user ?? null; // Ensure UI updates on logout
+      state = user;
     });
   }
-  /// Sign In with Email & Password
-  Future<String?> signInWithEmail(String email, String password) async {
+
+  /// **Sign Up with Email & Password**
+  Future<String?> signUpWithEmail(String email, String password) async {
     try {
+      print("Attempting sign up...");
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final user = userCredential.user;
+      print("User created: ${user?.uid}");
+
+      if (user != null) {
+        await _saveUserToFirestore(user);
+      }
+
+      state = user;
+      return null; // Success
+    } catch (e) {
+      print("Sign up error: $e");
+      state = _auth.currentUser;
+      return e.toString();
+    }
+  }
+
+  /// **Sign In with Email & Password**
+  Future<User?> signInWithEmail(String email, String password) async {
+    try {
+      print("Attempting sign in...");
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      state = userCredential.user;
-      return null; // Success
-    } catch (e) {
-      state =_auth.currentUser;
-      return null;  // Return error message
+      final user = userCredential.user;
+      print("User signed in: ${user?.uid}");
+
+      if (user != null) {
+        await _updateUserLoginTime(user);
+      }
+
+      state = user;
+      return user; // ✅ Return User? instead of String?
+    } on FirebaseAuthException catch (e) {
+      print("Sign in error: $e");
+      state = _auth.currentUser;
+      return null; // ✅ Return null if login fails
     }
   }
 
-  /// Google Sign-In
-  Future<String?> signInWithGoogle() async {
+  /// **Google Sign-In**
+  Future<User?> signInWithGoogle() async {
     try {
+      print("Attempting Google Sign-In...");
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return "Google Sign-In was canceled";
+      if (googleUser == null) return null; // User canceled login
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -50,80 +82,72 @@ class AuthViewModel extends StateNotifier<User?> {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await _auth.signInWithCredential(credential);
-      state = userCredential.user;
-      return null; // Success
-    } catch (e) {
-      // return "";
-      // return "Google Sign-In Failed: $e";
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      if (user != null) {
+        print("Google User Signed In: ${user.uid}");
+        await _saveUserToFirestore(user);
+      }
+
+      return user; // ✅ Return User? instead of String?
+    } catch (e, stackTrace) {
+      print("Google Sign-In error: $e");
+      print(stackTrace);
+      return null; // ✅ Return null if login fails
     }
   }
 
-  /// Forgot Password
+
+  /// **Forgot Password**
   Future<String?> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
+      print("Password reset email sent to $email");
       return null; // Success
     } catch (e) {
+      print("Failed to send reset email: $e");
       return "Failed to send reset email: $e";
     }
   }
 
-
-
-  Future<bool> sendOtp(String phoneNumber, BuildContext context) async {
-    try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
-          state = _auth.currentUser;
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.message ?? "Error")),
-          );
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OtpVerificationScreen(verificationId: verificationId),
-            ),
-          );
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {},
-      );
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> verifyOtp(String verificationId, String otp, BuildContext context) async {
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: otp,
-      );
-      await _auth.signInWithCredential(credential);
-      state = _auth.currentUser;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("OTP Verified!")),
-      );
-      Navigator.popUntil(context, (route) => route.isFirst);
-      return true;
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid OTP")),
-      );
-      return false;
-    }
-  }
+  //Sign Out (Logout)
   Future<void> signOut() async {
+    print("Signing out...");
     await GoogleSignIn().signOut();
     await _auth.signOut();
     state = null;
+  }
+
+  // Save New User Data to Firestore
+  Future<void> _saveUserToFirestore(User user) async {
+    try {
+      final userDoc = _firestore.collection('users').doc(user.uid);
+      final docSnapshot = await userDoc.get();
+
+      if (!docSnapshot.exists) {
+        await userDoc.set({
+          'uid': user.uid,
+          'email': user.email,
+          'displayName': user.displayName ?? '',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        print("User data saved to Firestore: ${user.uid}");
+      }
+    } catch (e) {
+      print("Error saving user to Firestore: $e");
+    }
+  }
+
+  /// **Update Last Login Time**
+  Future<void> _updateUserLoginTime(User user) async {
+    try {
+      await _firestore.collection('users').doc(user.uid).update({
+        'lastLogin': FieldValue.serverTimestamp(),
+      });
+      print("User last login updated: ${user.uid}");
+    } catch (e) {
+      print("Error updating login time: $e");
+    }
   }
 }

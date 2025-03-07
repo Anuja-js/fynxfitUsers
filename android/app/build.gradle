@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.fynxfitusers"
-        minSdk 19 // Adjust if needed; newer Firebase features may work better with minSdk 21+
+        minSdkVersion 23
         targetSdk flutter.targetSdkVersion
         versionCode flutter.versionCode
         versionName flutter.versionName

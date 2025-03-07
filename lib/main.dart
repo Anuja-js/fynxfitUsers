@@ -12,6 +12,7 @@ void main() async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const ProviderScope(
+
       child: MyApp()));
 }
 
@@ -20,6 +21,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final themeMode = ref.watch(themeProvider);
 
     return ScreenUtilInit(

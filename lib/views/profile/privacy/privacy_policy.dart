@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/theme.dart';
 import '../../../poviders/privacy_policy_provider.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_text.dart';
 class PrivacyPolicyPage extends ConsumerWidget {
   const PrivacyPolicyPage({super.key});
   @override

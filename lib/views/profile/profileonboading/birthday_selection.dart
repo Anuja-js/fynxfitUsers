@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fynxfituser/models/profile_state.dart';
 
 import '../../../core/utils/constants.dart';
 import '../../../theme.dart';
 import '../../../viewmodels/profile_view_model.dart';
-import '../../../widgets/custom_elevated_button.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 class BirthdayScreen extends ConsumerWidget {
   final PageController? controller;
@@ -110,7 +111,9 @@ class BirthdayScreen extends ConsumerWidget {
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                 text: "Next",
                 onPressed: () {
+
                   _validateAndProceed(context, viewModel, controller);
+
                 },
               ),
             ),
@@ -120,7 +123,7 @@ class BirthdayScreen extends ConsumerWidget {
     );
   }
 
-  void _validateAndProceed(BuildContext context, ProfileState viewModel, PageController? controller) {
+  void _validateAndProceed(BuildContext context,ProfileState viewModel, PageController? controller) {
     if (viewModel.birthday == null) {
       _showError(context, "Please select your birthday.");
       return;
@@ -145,6 +148,7 @@ class BirthdayScreen extends ConsumerWidget {
 
   void _showError(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
+
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,

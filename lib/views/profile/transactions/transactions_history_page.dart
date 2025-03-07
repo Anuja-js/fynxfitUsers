@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/utils/constants.dart';
 import '../../../poviders/transaction_provider.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 class TransactionHistoryPage extends ConsumerWidget {
   const TransactionHistoryPage({Key? key}) : super(key: key);

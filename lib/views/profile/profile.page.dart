@@ -9,7 +9,7 @@ import 'package:fynxfituser/views/profile/transactions/transactions_history_page
 import 'package:image_picker/image_picker.dart';
 import '../../core/utils/constants.dart';
 import '../../viewmodels/profile_view_model.dart';
-import '../../widgets/custom_text.dart';
+import '../../widgets/customs/custom_text.dart';
 
 class ProfileScreen extends ConsumerWidget {
   XFile? imageFile;

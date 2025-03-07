@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/home/main_screen.dart';
 import 'package:fynxfituser/views/onboading/normal_onboarding/onboading_screeen.dart';
-import 'package:fynxfituser/widgets/custom_splash_icon.dart';
+import 'package:fynxfituser/widgets/customs/custom_splash_icon.dart';
 import '../../viewmodels/splash_view_model.dart';
-
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
   @override
@@ -22,7 +21,6 @@ class SplashScreen extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => MainScreen()),
           );
         } else {
-          // User is not logged in, navigate to onboarding
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const OnboardingScreen()),
@@ -30,7 +28,6 @@ class SplashScreen extends ConsumerWidget {
         }
       }
     });
-
     return Scaffold(
       backgroundColor: isDarkMode
           ? AppThemes.darkTheme.scaffoldBackgroundColor

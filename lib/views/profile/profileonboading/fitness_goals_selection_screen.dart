@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/core/utils/constants.dart';
-import 'package:fynxfituser/widgets/custom_text.dart';
+import 'package:fynxfituser/widgets/customs/custom_text.dart';
 import '../../../theme.dart';
+import '../../../viewmodels/fitness_goal_view_model.dart';
 import '../../../viewmodels/profile_view_model.dart';
-import '../../../widgets/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_elevated_button.dart';
 
 final selectedGoalsProvider = StateProvider<List<String>>((ref) => []);
 
@@ -16,8 +17,9 @@ class FitnessGoalsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.read(profileViewModelProvider.notifier);
     final selectedGoals = ref.watch(selectedGoalsProvider);
+    final viewModel = ref.read(profileViewModelProvider.notifier);
+    final goalsState = ref.watch(fitnessGoalViewModelProvider);
 
     return Scaffold(
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -30,53 +32,37 @@ class FitnessGoalsScreen extends ConsumerWidget {
             CustomText(
               text: "Personalize Your Fitness Journey\nwith Us!",
               fontSize: 18.sp,
-              fontWeight: FontWeight.bold,overflow: TextOverflow.visible,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.visible,
             ),
             CustomText(
-              text:
-                  "Choose your goals so we can tailor your\nworkout and nutrition plan to fit your needs.",
+              text: "Choose your goals so we can tailor your\nworkout and nutrition plan to fit your needs.",
               fontSize: 10.sp,
               overflow: TextOverflow.visible,
               color: AppThemes.darkTheme.dividerColor,
             ),
             sh20,
-            Wrap(
-              spacing: 12.w,
-              runSpacing: 12.h,
-              alignment: WrapAlignment.center,
-              children: [
-                GoalOption(
-                    label: "Weight Loss",
-                    image: "assets/images/one.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-                GoalOption(
-                    label: "Muscle Gain",
-                    image: "assets/images/Muscle_Gain.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-                GoalOption(
-                    label: "General Fitness",
-                    image: "assets/images/General_Fitness.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-                GoalOption(
-                    label: "Endurance Training",
-                    image: "assets/images/Endurance_Training.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-                GoalOption(
-                    label: "Flexibility & Mobility",
-                    image: "assets/images/Flexibility_&_Mobility.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-                GoalOption(
-                    label: "Mind & Body Wellness",
-                    image: "assets/images/Mind_&_Body_Wellness.png",
-                    selectedGoals: selectedGoals,
-                    ref: ref),
-              ],
+
+            // Display goals dynamically from Firestore
+            goalsState.when(
+              data: (goals) => Wrap(
+                spacing: 12.w,
+                runSpacing: 12.h,
+                alignment: WrapAlignment.center,
+                children: goals
+                    .map((goal) => GoalOption(
+                  label: goal.title,
+                  image: goal.imageUrl,
+                  selectedGoals: selectedGoals,
+                  ref: ref,
+                ))
+                    .toList(),
+              ),
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: CustomText(text: "Error loading goals")),
             ),
+
+
             Spacer(),
             SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -86,7 +72,7 @@ class FitnessGoalsScreen extends ConsumerWidget {
                 text: "Next",
                 onPressed: () {
                   if (selectedGoals.isNotEmpty) {
-                    viewModel.updateFitnessGoal(selectedGoals.toString());
+                    viewModel.updateFitnessGoal(selectedGoals);
                     controller?.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -94,10 +80,11 @@ class FitnessGoalsScreen extends ConsumerWidget {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: CustomText(
-                        text: "Please select at least one fitness goal",
-                        color: AppThemes.darkTheme.scaffoldBackgroundColor,
-                      )),
+                        content: CustomText(
+                          text: "Please select at least one fitness goal",
+                          color: AppThemes.darkTheme.scaffoldBackgroundColor,
+                        ),
+                      ),
                     );
                   }
                 },
@@ -116,11 +103,12 @@ class GoalOption extends StatelessWidget {
   final List<String> selectedGoals;
   final WidgetRef ref;
 
-  GoalOption(
-      {required this.label,
-      required this.image,
-      required this.selectedGoals,
-      required this.ref});
+  GoalOption({
+    required this.label,
+    required this.image,
+    required this.selectedGoals,
+    required this.ref,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,8 +135,7 @@ class GoalOption extends StatelessWidget {
                   ? AppThemes.darkTheme.primaryColor.withOpacity(0.5)
                   : AppThemes.darkTheme.appBarTheme.foregroundColor,
               border: isSelected
-                  ? Border.all(
-                      color: AppThemes.darkTheme.primaryColor, width: 2)
+                  ? Border.all(color: AppThemes.darkTheme.primaryColor, width: 2)
                   : null,
             ),
             child: CircleAvatar(
@@ -156,14 +143,17 @@ class GoalOption extends StatelessWidget {
               backgroundColor: isSelected
                   ? Colors.grey.withOpacity(0.5)
                   : AppThemes.darkTheme.appBarTheme.foregroundColor,
-              backgroundImage: AssetImage(image),
+              backgroundImage: image.isNotEmpty
+                  ? NetworkImage(image) // ✅ Load image from Firestore
+                  : AssetImage("assets/images/goal_placeholder.png") as ImageProvider,
             ),
           ),
           sh10,
           CustomText(
-              text: label,
-              fontSize: 10.sp,
-              color: AppThemes.darkTheme.appBarTheme.foregroundColor!),
+            text: label,
+            fontSize: 10.sp,
+            color: AppThemes.darkTheme.appBarTheme.foregroundColor!,
+          ),
         ],
       ),
     );

@@ -1,19 +1,22 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/views/home/main_screen.dart';
-import 'package:fynxfituser/views/profile/profile.page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fynxfituser/viewmodels/profile_view_model.dart';
 
 import '../../../core/utils/constants.dart';
 import '../../../theme.dart';
-import '../../../widgets/custom_elevated_button.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 class ProfileImage extends ConsumerStatefulWidget {
+  const ProfileImage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileImageState createState() => _ProfileImageState();
 }
 
@@ -23,7 +26,6 @@ class _ProfileImageState extends ConsumerState<ProfileImage> {
   Widget build(BuildContext context) {
     final profileState = ref.watch(profileViewModelProvider);
     final profileViewModel = ref.read(profileViewModelProvider.notifier);
-
     return Scaffold(
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
       body: Padding(
@@ -54,7 +56,7 @@ class _ProfileImageState extends ConsumerState<ProfileImage> {
                               backgroundImage: profileState
                                       .profileImageUrl.isNotEmpty
                                   ? NetworkImage(profileState.profileImageUrl)
-                                  : AssetImage("assets/images/logo_white.png")),
+                                  : const AssetImage("assets/images/logo_white.png")),
                           Positioned(
                             bottom: 30,
                             right: 0,
@@ -156,6 +158,8 @@ class _ProfileImageState extends ConsumerState<ProfileImage> {
                   textColor: AppThemes.darkTheme.dividerColor,
                   text: "Next",
                   onPressed: () {
+                    final auth=FirebaseAuth.instance.currentUser;
+                    profileViewModel.saveProfileData(auth!.uid);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (BuildContext context) {
                           return MainScreen();

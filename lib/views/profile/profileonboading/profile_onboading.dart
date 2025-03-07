@@ -14,26 +14,33 @@ import 'height_selection_screen.dart';
 
 class ProfileOnboadingOne extends ConsumerWidget {
   final PageController pageController = PageController();
+  final String userId;
+
+  ProfileOnboadingOne({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
-      appBar: AppBar(elevation: 0,backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,),
+    return Scaffold(
+      backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+      ),
       body: Stack(
         children: [
           PageView(
             controller: pageController,
             children: [
-              GenderSelectionScreen(controller:pageController),
-              BirthdayScreen(controller: pageController,),
-              WeightScreen(controller: pageController,),
+              GenderSelectionScreen(controller: pageController, userId: userId),
+              BirthdayScreen(controller: pageController),
+              WeightScreen(controller: pageController),
               HeightScreen(controller: pageController),
-             FitnessGoalsScreen(controller: pageController),
-             ProfileImage(),
+              FitnessGoalsScreen(controller: pageController),
+              ProfileImage(),
             ],
           ),
           Positioned(
-          top: 0.h,
+            top: 0.h,
             left: 0,
             right: 0,
             child: Center(
@@ -43,7 +50,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
                 effect: WormEffect(
                   dotColor: Colors.grey,
                   activeDotColor: Colors.purple,
-                  dotWidth:55.w,
+                  dotWidth: 55.w,
                   dotHeight: 8.h,
                 ),
               ),

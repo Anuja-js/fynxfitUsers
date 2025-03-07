@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fynxfituser/core/utils/constants.dart';
-import 'package:fynxfituser/widgets/custom_text.dart';
 import '../../../theme.dart';
 import '../../../viewmodels/profile_view_model.dart';
-import '../../../widgets/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_elevated_button.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 final selectedGenderProvider = StateProvider<String?>((ref) => null);
 
 class GenderSelectionScreen extends ConsumerWidget {
   final PageController? controller;
+  final String userId;
 
-  GenderSelectionScreen({required this.controller, Key? key}) : super(key: key);
+  GenderSelectionScreen(
+      {required this.controller, required this.userId, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.read(profileViewModelProvider.notifier);
     final selectedGender = ref.watch(selectedGenderProvider);
 
-    return Scaffold(backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+    return Scaffold(
+      backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 25.h, horizontal: 12.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(text: "Please Select An Option", fontSize: 13.sp),
-            CustomText(text: "Tell Us Who You Are", fontSize: 18.sp, fontWeight: FontWeight.bold),
+            CustomText(
+                text: "Tell Us Who You Are",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold),
             CustomText(
               text: "This helps us personalize your fitness experience.",
               fontSize: 10.sp,
@@ -36,9 +42,21 @@ class GenderSelectionScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GenderOption(label: "Female", image: "assets/images/female.png", selectedGender: selectedGender, ref: ref),
-                GenderOption(label: "Male", image: "assets/images/male.png", selectedGender: selectedGender, ref: ref),
-                GenderOption(label: "Other", image: "assets/images/other.png", selectedGender: selectedGender, ref: ref),
+                GenderOption(
+                    label: "Female",
+                    image: "assets/images/female.png",
+                    selectedGender: selectedGender,
+                    ref: ref),
+                GenderOption(
+                    label: "Male",
+                    image: "assets/images/male.png",
+                    selectedGender: selectedGender,
+                    ref: ref),
+                GenderOption(
+                    label: "Other",
+                    image: "assets/images/other.png",
+                    selectedGender: selectedGender,
+                    ref: ref),
               ],
             ),
             Spacer(),
@@ -48,9 +66,11 @@ class GenderSelectionScreen extends ConsumerWidget {
                 backgroundColor: AppThemes.darkTheme.primaryColor,
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                 text: "Next",
-                onPressed: () {
+                onPressed: () async {
                   if (selectedGender != null) {
                     viewModel.updateGender(selectedGender);
+                    // await viewModel
+                    //     .saveGenderToFirestore(userId); // Save to Firestore
                     controller?.nextPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -76,7 +96,11 @@ class GenderOption extends StatelessWidget {
   final String? selectedGender;
   final WidgetRef ref;
 
-  GenderOption({required this.label, required this.image, required this.selectedGender, required this.ref});
+  GenderOption(
+      {required this.label,
+      required this.image,
+      required this.selectedGender,
+      required this.ref});
 
   @override
   Widget build(BuildContext context) {
@@ -92,15 +116,18 @@ class GenderOption extends StatelessWidget {
         width: 90.w,
         height: 100.h,
         decoration: BoxDecoration(
-          color: isSelected? Colors.grey.withOpacity(0.5):AppThemes.darkTheme.appBarTheme.foregroundColor,
+          color: isSelected
+              ? Colors.grey.withOpacity(0.5)
+              : AppThemes.darkTheme.appBarTheme.foregroundColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(image, height: 35.h, width: 35.w),
-           sh10,
-            CustomText(text: label, color: AppThemes.darkTheme.dialogBackgroundColor),
+            SizedBox(height: 10),
+            CustomText(
+                text: label, color: AppThemes.darkTheme.dialogBackgroundColor),
           ],
         ),
       ),

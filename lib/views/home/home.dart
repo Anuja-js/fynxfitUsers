@@ -7,7 +7,7 @@ import 'package:fynxfituser/views/login/login.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
 
-import '../../widgets/custom_text.dart';
+import '../../widgets/customs/custom_text.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

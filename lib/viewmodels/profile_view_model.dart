@@ -1,61 +1,68 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fynxfituser/models/fitness_model.dart';
+import 'package:fynxfituser/models/profile_state.dart';
+import 'package:fynxfituser/repository/user_repo.dart';
+import '../models/user_model.dart';
+
 final profileViewModelProvider = StateNotifierProvider<ProfileViewModel, ProfileState>(
       (ref) => ProfileViewModel(),
 );
 
-class ProfileState {
-  final String gender;
-  final DateTime? birthday;
-  final double weight;
-  final double height;
-  final String fitnessGoal;
-  final String profileImageUrl;
-
-  ProfileState({
-    this.gender = "",
-    this.birthday,
-    this.weight = 75,
-    this.height = 165,
-    this.fitnessGoal = "",
-    this.profileImageUrl = "",
-  });
-
-  ProfileState copyWith({
-    String? gender,
-    DateTime? birthday,
-    double? weight,
-    double? height,
-    String? fitnessGoal,
-    String? profileImageUrl,
-  }) {
-    return ProfileState(
-      gender: gender ?? this.gender,
-      birthday: birthday ?? this.birthday,
-      weight: weight ?? this.weight,
-      height: height ?? this.height,
-      fitnessGoal: fitnessGoal ?? this.fitnessGoal,
-      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
-    );
-  }
-}
-
-/// ViewModel
 class ProfileViewModel extends StateNotifier<ProfileState> {
+  final UserRepository _userRepository = UserRepository();
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   ProfileViewModel() : super(ProfileState());
 
   void updateGender(String gender) => state = state.copyWith(gender: gender);
-  void updateBirthday(DateTime birthday) => state = state.copyWith(birthday: birthday);
-  void updateWeight(double weight) => state = state.copyWith(weight: weight);
-  void updateHeight(double height) => state = state.copyWith(height: height);
-  void updateFitnessGoal(String goal) => state = state.copyWith(fitnessGoal: goal);
 
-  Future<void> uploadProfileImage(File imageFile) async {
-    final storageRef = FirebaseStorage.instance.ref().child('profile_images/${DateTime.now()}.jpg');
-    await storageRef.putFile(imageFile);
-    final downloadUrl = await storageRef.getDownloadURL();
-    state = state.copyWith(profileImageUrl: downloadUrl);
+  Future<void> saveGenderToFirestore(String userId) async {
+    final user = UserModel(uid: userId,  gender: state.gender);
+    await _userRepository.update(user);
+    // await _userRepository.addUser(user);
   }
+  void updateBirthday(DateTime birthday) {
+    state = state.copyWith(birthday: birthday);
+  }
+  void updateFitnessGoal(List<String> fitnessGoal) {
+    state = state.copyWith(fitnessGoal: fitnessGoal.toString());
+  }
+  Future<void> uploadProfileImage(File imageFile) async {
+    // Upload logic using Firebase Storage
+  }
+  Future<void> saveProfileData(String userId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'gender': state.gender,
+        'birthday': state.birthday?.toIso8601String(),
+        'weight': state.weight,
+        'height': state.height,
+        'fitnessGoal': state.fitnessGoal,
+        'profileImageUrl': state.profileImageUrl,
+      });
+    } catch (e) {
+      print("Error saving profile data: $e");
+    }
+  }
+  void updateHeight(double height) {
+    state = state.copyWith(height: height);
+  }
+  void updateweight(double weight) {
+    state = state.copyWith(height: weight);
+  }
+
+  Future<void> saveHeightToFirestore(String userId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'height': state.height,
+      });
+    } catch (e) {
+      print("Error updating height: $e");
+    }
+  }
+
 }
+
 

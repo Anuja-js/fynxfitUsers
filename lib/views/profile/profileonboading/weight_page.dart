@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fynxfituser/widgets/custom_elevated_button.dart';
+import 'package:fynxfituser/widgets/customs/custom_elevated_button.dart';
 import '../../../core/utils/constants.dart';
 import '../../../theme.dart';
 import '../../../viewmodels/profile_view_model.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/customs/custom_text.dart';
 
 class WeightScreen extends ConsumerStatefulWidget {
   final PageController? controller;
@@ -68,7 +68,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                             isKgUnit = true;
                             selectedWeight = selectedWeight / 2.20462;
                           });
-                          viewModel.updateWeight(selectedWeight);
+                          // viewModel.updateWeight(selectedWeight);
                         }
                       },
                       child: Container(
@@ -96,7 +96,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                             isKgUnit = false;
                             selectedWeight = selectedWeight * 2.20462;
                           });
-                          viewModel.updateWeight(selectedWeight);
+                          // viewModel.updateWeight(selectedWeight);
                         }
                       },
                       child: Container(
@@ -127,7 +127,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 setState(() {
                   selectedWeight = weight;
                 });
-                viewModel.updateWeight(weight);
+                // viewModel.updateWeight(weight);
               },
               isKgUnit: isKgUnit,
             ),
@@ -171,6 +171,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                 text: "Next",
                 onPressed: () {
+                  viewModel.updateweight(selectedWeight);
                   widget.controller?.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
