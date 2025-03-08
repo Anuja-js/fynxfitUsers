@@ -7,3 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
  SizedBox sw10=SizedBox(width: 10.w,);
  SizedBox sw5=SizedBox(width: 5.w,);
  SizedBox sw20=SizedBox(width: 20.w,);
+class CloudinaryConstants {
+ static const String CLOUDINARY_CLOUD_NAME = "dswwx1kl4";
+ static const String CLOUDINARY_API_KEY = "413491413778726";
+ static const String CLOUDINARY_UPLOAD_PRESET = "preset-for-image-upload";
+}

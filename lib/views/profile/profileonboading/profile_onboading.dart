@@ -36,7 +36,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
               WeightScreen(controller: pageController),
               HeightScreen(controller: pageController),
               FitnessGoalsScreen(controller: pageController),
-              ProfileImage(),
+             ProfileImageScreen(),
             ],
           ),
           Positioned(

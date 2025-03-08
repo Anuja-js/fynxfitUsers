@@ -5,9 +5,11 @@ class ProfileState {
   final double height;
   final String fitnessGoal;
   final String profileImageUrl;
+  final String name;
 
   ProfileState({
     this.gender = "",
+    this.name="",
     this.birthday,
     this.weight = 75,
     this.height = 165,
@@ -21,6 +23,7 @@ class ProfileState {
     double? weight,
     double? height,
     String? fitnessGoal,
+    String? name,
     String? profileImageUrl,
   }) {
     return ProfileState(
@@ -29,6 +32,7 @@ class ProfileState {
       weight: weight ?? this.weight,
       height: height ?? this.height,
       fitnessGoal: fitnessGoal ?? this.fitnessGoal,
+     name: name ?? this.name,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
     );
   }

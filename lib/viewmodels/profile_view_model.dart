@@ -1,13 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fynxfituser/models/fitness_model.dart';
+import 'package:fynxfituser/poviders/profile_provider.dart';
+import 'package:fynxfituser/repository/profile_repo.dart';
+import 'package:fynxfituser/viewmodels/auth_view_model.dart';
+import "package:http/http.dart" as http;
 import 'package:fynxfituser/models/profile_state.dart';
 import 'package:fynxfituser/repository/user_repo.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
 
-final profileViewModelProvider = StateNotifierProvider<ProfileViewModel, ProfileState>(
-      (ref) => ProfileViewModel(),
+final profileViewModelProvider =
+    StateNotifierProvider<ProfileViewModel, ProfileState>(
+  (ref) => ProfileViewModel(),
 );
 
 class ProfileViewModel extends StateNotifier<ProfileState> {
@@ -19,19 +25,23 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   void updateGender(String gender) => state = state.copyWith(gender: gender);
 
   Future<void> saveGenderToFirestore(String userId) async {
-    final user = UserModel(uid: userId,  gender: state.gender);
+    final user = UserModel(uid: userId, gender: state.gender);
     await _userRepository.update(user);
     // await _userRepository.addUser(user);
   }
+
   void updateBirthday(DateTime birthday) {
     state = state.copyWith(birthday: birthday);
   }
+
   void updateFitnessGoal(List<String> fitnessGoal) {
     state = state.copyWith(fitnessGoal: fitnessGoal.toString());
   }
-  Future<void> uploadProfileImage(File imageFile) async {
-    // Upload logic using Firebase Storage
+
+  Future<void> uploadProfileImage(String imageurl) async {
+    state = state.copyWith(profileImageUrl: imageurl.toString());
   }
+
   Future<void> saveProfileData(String userId) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -46,9 +56,11 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
       print("Error saving profile data: $e");
     }
   }
+
   void updateHeight(double height) {
     state = state.copyWith(height: height);
   }
+
   void updateweight(double weight) {
     state = state.copyWith(height: weight);
   }
@@ -63,6 +75,62 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
     }
   }
 
+  Future<UserModel?> getUserDetails(String userId) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (doc.exists) {
+        var data = UserModel.fromJson(doc.data() as Map<String, dynamic>);
+        state = state.copyWith(
+          gender: data.gender,
+          height: double.tryParse(data.height.toString()),
+          weight: double.tryParse(data.weight.toString()),
+          profileImageUrl: data.image,
+          birthday: DateTime.tryParse(data.age.toString()),
+          name: data.displayName,
+        );
+        // return
+      } else {
+        print("User not found");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching user details: $e");
+      return null;
+    }
+  }
 }
 
+final profileImageViewModelProvider =
+    StateNotifierProvider<ProfileImageViewModel, AsyncValue<File?>>((ref) {
+  return ProfileImageViewModel(ref.read(profileImageRepositoryProvider));
+});
 
+class ProfileImageViewModel extends StateNotifier<AsyncValue<File?>> {
+  final ProfileImageRepository _repository;
+  ProfileImageViewModel(this._repository) : super(const AsyncValue.data(null));
+
+  final ImagePicker _picker = ImagePicker();
+
+  /// **Pick Image from Gallery**
+  Future<void> pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      state = AsyncValue.data(File(pickedFile.path));
+    }
+  }
+
+  /// **Upload Image to Cloudinary & Firestore**
+  Future<String?> uploadImage() async {
+    if (state.value == null) return "";
+
+    try {
+      String? imageUrl =
+          await _repository.uploadImageToCloudinary(state.value!);
+      return imageUrl!;
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+}

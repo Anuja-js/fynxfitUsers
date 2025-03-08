@@ -39,7 +39,7 @@ class ProfileScreen extends ConsumerWidget {
                         radius: 50.r,
                         backgroundColor: AppThemes.darkTheme.primaryColor,
                         backgroundImage:
-                             AssetImage("assets/images/logo_white.png")),
+                             NetworkImage(profileState.profileImageUrl)),
                     Positioned(
                       bottom: 30,
                       right: 0,
@@ -61,12 +61,12 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 sh10,
                 CustomText(
-                  text: 'Anuja J S',
+                  text: profileState.name,
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                 ),
                 CustomText(
-                  text: 'Birthday:February 19 2002',
+                  text:profileState.birthday.toString(),
                   fontSize: 14,
                 ),
                 CustomText(
@@ -185,7 +185,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  imageFile=await pickImage(ImageSource.camera, viewModel);
+                  // imageFile=await pickImage(ImageSource.camera, viewModel);
                 },
               ),
               ListTile(
@@ -197,7 +197,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  imageFile=await pickImage(ImageSource.gallery, viewModel);
+                  // imageFile=await pickImage(ImageSource.gallery, viewModel);
                 },
               ),
             ],
@@ -207,13 +207,13 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future pickImage(ImageSource source, ProfileViewModel viewModel) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      viewModel.uploadProfileImage(File(pickedFile.path));
-    }
-    return pickedFile;
-  }
+  // Future pickImage(ImageSource source, ProfileViewModel viewModel) async {
+  //   final pickedFile = await ImagePicker().pickImage(source: source);
+  //   if (pickedFile != null) {
+  //     viewModel.uploadProfileImage(File.);
+  //   }
+  //   return pickedFile;
+  // }
 
   Widget buildStatItem(String value, String label) {
     return Padding(
