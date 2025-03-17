@@ -5,7 +5,7 @@ import 'package:fynxfituser/theme.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/constants.dart';
-import '../../../poviders/transaction_provider.dart';
+import '../../../providers/transaction_provider.dart';
 import '../../../widgets/customs/custom_text.dart';
 
 class TransactionHistoryPage extends ConsumerWidget {

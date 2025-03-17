@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/viewmodels/password_vilible_view_model.dart';
 import 'package:fynxfituser/views/login/login.dart';
 
-import '../../poviders/text_filed_providers.dart';
+import '../../providers/text_filed_providers.dart';
 import '../../theme.dart';
 import '../../viewmodels/auth_view_model.dart';
 import '../../widgets/customs/custom_elevated_button.dart';

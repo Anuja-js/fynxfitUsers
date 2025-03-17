@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fynxfituser/poviders/profile_provider.dart';
+import 'package:fynxfituser/providers/profile_provider.dart';
 import 'package:fynxfituser/repository/profile_repo.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
 import "package:http/http.dart" as http;

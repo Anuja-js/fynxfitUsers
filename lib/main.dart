@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/firebase_options.dart';
-import 'package:fynxfituser/poviders/theme_provider.dart';
+import 'package:fynxfituser/providers/theme_provider.dart';
 import 'package:fynxfituser/views/splash/splash.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
