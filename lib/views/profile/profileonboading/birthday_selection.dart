@@ -28,7 +28,7 @@ class BirthdayScreen extends ConsumerWidget {
           children: [
             CustomText(text: "Please Fill The Details", fontSize: 13.sp),
             CustomText(
-              text: "Anuja, when is your birthday?",
+              text: "${viewModel.name}, when is your birthday?",
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),

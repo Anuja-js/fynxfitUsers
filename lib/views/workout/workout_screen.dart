@@ -4,10 +4,6 @@ import 'package:fynxfituser/views/workout/workout_details_screen.dart';
 
 import '../../models/workout_model.dart';
 import '../../providers/workout_provider.dart';
-
-import 'package:video_player/video_player.dart';
-
-
 class WorkoutListPage extends ConsumerWidget {
   const WorkoutListPage({super.key});
 

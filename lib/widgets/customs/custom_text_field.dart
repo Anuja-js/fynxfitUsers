@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String hintText;
+  final String labelText;
   final TextInputType keyboardType;
   final bool obscureText;
   final Color textColor;
@@ -36,6 +37,7 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.onChanged,
     this.onTap,
+    this.labelText="",
     this.textAlign = TextAlign.start,
   });
 
@@ -57,7 +59,7 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged,
       onTap: onTap,
       decoration: InputDecoration(
-        hintText: hintText,
+        hintText: hintText,labelText: labelText,labelStyle:TextStyle(color: Colors.grey, fontSize: fontSize.sp) ,
         hintStyle: TextStyle(color: Colors.grey, fontSize: fontSize.sp),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,

@@ -5,7 +5,7 @@ class UserModel {
   int? age;
   String? gender;
   String? email;
-  String? displayName;
+  String? name;
   String? weight;
   String? height;
   List<String>? fitnessGoals;
@@ -17,7 +17,7 @@ class UserModel {
     this.age,
     this.gender,
     this.email,
-    this.displayName,
+    this.name,
     this.weight,
     this.height,
     this.fitnessGoals,
@@ -32,7 +32,7 @@ class UserModel {
       'age': age,
       'gender': gender,
       'email': email,
-      'displayName': displayName,
+      'name':name,
       'weight': weight,
       'height': height,
       'fitnessGoals': fitnessGoals,
@@ -48,7 +48,7 @@ class UserModel {
       age: json['age'] as int?,
       gender: json['gender'] as String?,
       email: json['email'] as String?,
-      displayName: json['displayName'] as String?,
+     name: json['name'] as String?,
       weight: json['weight'] as String?,
       height: json['height'] as String?,
       fitnessGoals: (json['fitnessGoals'] as List<dynamic>?)

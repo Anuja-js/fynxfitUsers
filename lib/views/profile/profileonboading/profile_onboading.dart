@@ -24,7 +24,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+        backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,automaticallyImplyLeading: false,
       ),
       body: Stack(
         children: [
@@ -32,6 +32,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
             controller: pageController,
             children: [
               GenderSelectionScreen(controller: pageController, userId: userId),
+
               BirthdayScreen(controller: pageController),
               WeightScreen(controller: pageController),
               HeightScreen(controller: pageController),

@@ -18,13 +18,13 @@ class EmailPasswordSignUp extends ConsumerStatefulWidget {
 
 class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
   // Create a GlobalKey to uniquely identify the Form widget and allow validation.
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final _emailController = ref.watch(emailControllerProvider);
-    final _passwordController = ref.watch(passwordControllerProvider);
-    final _confirmPasswordController = ref.watch(confirmPasswordControllerProvider);
+    final emailController = ref.watch(emailControllerProvider);
+    final passwordController = ref.watch(passwordControllerProvider);
+    final confirmPasswordController = ref.watch(confirmPasswordControllerProvider);
 
     final isPasswordVisible = ref.watch(passwordVisibilityProvider);
     final authViewModel = ref.read(authProvider.notifier);
@@ -34,13 +34,13 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
       appBar: AppBar(title: const Text("Sign Up")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // Wrap the fields in a Form widget with the _formKey
+        // Wrap the fields in a Form widget with the formKey
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             children: [
               CustomTextFormField(
-                controller: _emailController,
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 hintText: "Enter Your Email",
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -57,7 +57,7 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
               ),
               const SizedBox(height: 10),
               CustomTextFormField(
-                controller: _passwordController,
+                controller: passwordController,
                 keyboardType: TextInputType.text,
                 hintText: "Enter Your Password",
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -80,7 +80,7 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
               ),
               const SizedBox(height: 10),
               CustomTextFormField(
-                controller: _confirmPasswordController,
+                controller: confirmPasswordController,
                 keyboardType: TextInputType.text,
                 hintText: "Confirm Your Password",
                 textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -89,7 +89,7 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
                   if (value == null || value.isEmpty) {
                     return "Please confirm your password";
                   }
-                  if (value != _passwordController.text) {
+                  if (value != passwordController.text) {
                     return "Passwords do not match";
                   }
                   return null;
@@ -102,13 +102,16 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
                   backgroundColor: AppThemes.darkTheme.primaryColor,
                   textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                   text: "Create Account",
-                  onPressed: () {
+                  onPressed: () async{
                     // Validate all fields in the form.
-                    if (_formKey.currentState!.validate()) {
-                      authViewModel.signUpWithEmail(
-                        _emailController.text,
-                        _passwordController.text,
+                    if (formKey.currentState!.validate()) {
+                    await  authViewModel.signUpWithEmail(
+                        emailController.text,
+                        passwordController.text,
                       );
+                      emailController.clear();
+                      passwordController.clear();
+                      confirmPasswordController.clear();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (BuildContext ctx) {

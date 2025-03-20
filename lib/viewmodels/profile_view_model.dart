@@ -22,10 +22,10 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   ProfileViewModel() : super(ProfileState());
 
-  void updateGender(String gender) => state = state.copyWith(gender: gender);
+  void updateGender(String gender,String name) => state = state.copyWith(gender: gender,name:name);
 
   Future<void> saveGenderToFirestore(String userId) async {
-    final user = UserModel(uid: userId, gender: state.gender);
+    final user = UserModel(uid: userId, gender: state.gender,name:state.name);
     await _userRepository.update(user);
     // await _userRepository.addUser(user);
   }
@@ -49,8 +49,11 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
         'birthday': state.birthday?.toIso8601String(),
         'weight': state.weight,
         'height': state.height,
+        "name":state.name,
         'fitnessGoal': state.fitnessGoal,
         'profileImageUrl': state.profileImageUrl,
+        'completeProfileOnboarding':true,
+        "subscribe":false,
       });
     } catch (e) {
       print("Error saving profile data: $e");
@@ -88,7 +91,8 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
           weight: double.tryParse(data.weight.toString()),
           profileImageUrl: data.image,
           birthday: DateTime.tryParse(data.age.toString()),
-          name: data.displayName,
+          name: data.name,
+          // subcribe:data.subscribe,
         );
         // return
       } else {

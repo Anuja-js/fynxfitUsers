@@ -29,6 +29,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.read(profileViewModelProvider.notifier);
+    final nameviewModel = ref.read(profileViewModelProvider);
 
     return Scaffold(
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -39,7 +40,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
           children: [
             CustomText(text: "Please Fill The Details", fontSize: 13.sp),
             CustomText(
-              text: "Anuja, What Is Your Weight?",
+              text: "${nameviewModel.name}, What Is Your Weight?",
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),

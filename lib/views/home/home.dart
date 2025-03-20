@@ -7,6 +7,7 @@ import 'package:fynxfituser/providers/article_provider.dart';
 import 'package:fynxfituser/providers/workout_provider.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/article/article_screen.dart';
+import 'package:fynxfituser/views/coach/coach_list_page.dart';
 import 'package:fynxfituser/views/login/login.dart';
 import 'package:fynxfituser/views/workout/workout_screen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -69,7 +70,14 @@ class HomeScreen extends ConsumerWidget {
                         Icons.insert_chart, 'Progress\nTracking', Colors.white),
                     buildNavItem(
                         Icons.restaurant_menu, 'Nutrition', Colors.white),
-                    buildNavItem(Icons.people, 'Coaches', Colors.white),
+                    InkWell(
+                        onTap: (){
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (ctx) {
+                                return const CoachListPage();
+                              }));
+                        },
+                        child: buildNavItem(Icons.people, 'Coaches', Colors.white)),
                   ],
                 ),
               ),

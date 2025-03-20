@@ -44,7 +44,32 @@ class AuthViewModel extends StateNotifier<User?> {
       return e.toString();
     }
   }
+  Future<bool> checkUserProfile(String userId) async {
+    try {
+      final userDoc = await _firestore.collection('users').doc(userId).get();
 
+      if (userDoc.exists) {
+        return userDoc.data()?['completeProfileOnboarding'] ?? false;
+      }
+    } catch (e) {
+      print("Error fetching user profile: $e");
+    }
+    return false; // Default to false if an error occurs
+  }
+  Future<void> resetUserData(String userId) async {
+    await _firestore.collection('users').doc(userId).set({
+      'gender': null,
+      'birthday': null,
+      'weight': null,
+      'height': null,
+      'fitnessGoals': null,
+      'profileImage': null,
+      "name":null,
+      "displayName":null,
+      "subscribe":false,
+      'completeProfileOnboarding': false,
+    }, SetOptions(merge: true));
+  }
   /// **Sign In with Email & Password**
   Future<User?> signInWithEmail(String email, String password) async {
     try {
@@ -129,9 +154,9 @@ class AuthViewModel extends StateNotifier<User?> {
         await userDoc.set({
           'uid': user.uid,
           'email': user.email,
-          'displayName': user.displayName ?? '',
           'createdAt': FieldValue.serverTimestamp(),
-        });
+
+"completeProfileOnboarding":false        });
         print("User data saved to Firestore: ${user.uid}");
       }
     } catch (e) {

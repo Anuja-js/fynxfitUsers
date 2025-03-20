@@ -83,8 +83,14 @@ class ProfileImageScreen extends ConsumerWidget {
                   backgroundColor: Colors.grey,
                   textColor: Colors.black,
                   text: "Skip",
-                  onPressed: () {
-                    Navigator.pop(context);
+                  onPressed: () async{  viewModels.copyWith(profileImageUrl:null );
+                  final auth=await FirebaseAuth.instance.currentUser;
+                  // ref.read(profileViewModelProvider.notifier).uploadProfileImage(null);
+                  ref.read(profileViewModelProvider.notifier).saveProfileData(auth!.uid);
+
+                  Navigator.push(context, MaterialPageRoute(builder: (ctx){
+                    return MainScreen();
+                  }));
                   },
                 ),
               ),

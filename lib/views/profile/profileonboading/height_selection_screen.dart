@@ -28,7 +28,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.read(profileViewModelProvider.notifier);
-
+    final nameviewModel = ref.read(profileViewModelProvider);
     return Scaffold(
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
       body: Padding(
@@ -38,7 +38,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
           children: [
             CustomText(text: "Please Fill The Details", fontSize: 13.sp),
             CustomText(
-              text: "Anuja, What Is Your Height?",
+              text: "${nameviewModel.name}, What Is Your Height?",
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
