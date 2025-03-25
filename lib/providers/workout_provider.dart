@@ -16,13 +16,34 @@ class WorkoutNotifier extends StateNotifier<List<WorkoutModel>> {
           .get();
 
       List<WorkoutModel> workouts = snapshot.docs.map((doc) {
-        return WorkoutModel.fromJson(doc.data() as Map<String, dynamic>, doc.id);
+        return WorkoutModel.fromJson(
+            doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
 
       print("Fetched ${workouts.length} workouts.");
       state = workouts;
     } catch (e) {
       print("Error fetching workouts: $e");
+    }
+  }
+
+  sort(String category) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection("workouts")
+          .where('category', isEqualTo: category)
+          .get();
+
+      List<WorkoutModel> workouts = snapshot.docs.map((doc) {
+        return WorkoutModel.fromJson(
+            doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      print("Fetched ${workouts.length} workouts for category: $category");
+      state = workouts; // 🔥 Update state with sorted & filtered workouts
+    } catch (e) {
+      print("Error fetching workouts: $e");
+      state=[];
     }
   }
 }

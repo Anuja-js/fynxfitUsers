@@ -207,14 +207,6 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  // Future pickImage(ImageSource source, ProfileViewModel viewModel) async {
-  //   final pickedFile = await ImagePicker().pickImage(source: source);
-  //   if (pickedFile != null) {
-  //     viewModel.uploadProfileImage(File.);
-  //   }
-  //   return pickedFile;
-  // }
-
   Widget buildStatItem(String value, String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),

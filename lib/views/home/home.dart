@@ -415,16 +415,16 @@ class LogOutSession extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context)
-                        .pop(); // Close the dialog
+                        .pop();
                   },
                   child: const Text("Cancel"),
                 ),
                 TextButton(
                   onPressed: () async {
                     Navigator.of(context)
-                        .pop(); // Close the dialog
+                        .pop();
                     await authViewModel
-                        .signOut(); // Sign out the user
+                        .signOut(); 
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

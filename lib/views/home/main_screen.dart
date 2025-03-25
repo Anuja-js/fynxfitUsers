@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/views/bmi/bmi_calculation_page.dart';
+import 'package:fynxfituser/views/favorites/favorites.dart';
 import '../../providers/article_provider.dart';
 import '../../providers/bottom_nav_provider.dart';
 import '../../providers/workout_provider.dart';
@@ -34,7 +35,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final List<Widget> screens = [
       const HomeScreen(),
      BMICalculatorPage(),
-      const HomeScreen(),
+     FavoritesScreen(userId: FirebaseAuth.instance.currentUser!.uid),
       MessagedUsersListScreen(),
       ProfileScreen(),
 

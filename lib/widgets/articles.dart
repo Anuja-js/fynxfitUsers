@@ -6,11 +6,13 @@ class ArticleCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
-
+  final String articleId;
+  final String userId;
   const ArticleCard({
     super.key,
     required this.title,
-    required this.subtitle,
+    required this.subtitle,required this
+  .userId,required this.articleId,
     required this.imageUrl,
   });
 
@@ -26,9 +28,11 @@ class ArticleCard extends StatelessWidget {
               title: title,
               subtitle: subtitle,
               imageUrl: imageUrl,
+              articleId: articleId,
             ),
           ),
         );
+
       },
       child: Card(
         margin: const EdgeInsets.all(8.0),

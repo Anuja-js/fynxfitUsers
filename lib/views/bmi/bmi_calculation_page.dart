@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/viewmodels/bmi_view_model.dart';
+
+import '../../widgets/customs/custom_text.dart';
 
 class BMICalculatorPage extends ConsumerWidget {
   final _heightController = TextEditingController();
@@ -13,8 +17,9 @@ class BMICalculatorPage extends ConsumerWidget {
     final bmiState = ref.watch(bmiProvider);
     final bmiNotifier = ref.read(bmiProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("BMI Calculator")),
+    return Scaffold(backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
+      appBar: AppBar(title: CustomText(text:"BMI Calculator",fontWeight: FontWeight.bold,fontSize: 15.sp,),
+        backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

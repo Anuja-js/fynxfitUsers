@@ -21,6 +21,9 @@ class ArticleListPage extends ConsumerWidget {
                   title: articles[index].title,
                   subtitle: articles[index].subtitle,
                   imageUrl: articles[index].imageUrl,
+                userId:   articles[index].userId,
+                  articleId: articles[index].documentId,
+
                 );
               },
             ),
