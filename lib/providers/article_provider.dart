@@ -25,9 +25,18 @@ class ArticleNotifier extends StateNotifier<List<ArticleModel>> {
       print("Error fetching articles: $e");
     }
   }
+
+  void searchArticles(String query) {
+    final lowerQuery = query.toLowerCase();
+   state= state.where((article) {
+      final title = article.title.toLowerCase();
+      final content = article.subtitle.toLowerCase();
+      return title.contains(lowerQuery) || content.contains(lowerQuery);
+    }).toList();
+  }
+
 }
 
-// Provider for fetching articles
 final articleProvider =
 StateNotifierProvider<ArticleNotifier, List<ArticleModel>>(
         (ref) => ArticleNotifier());

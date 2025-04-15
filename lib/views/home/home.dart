@@ -8,16 +8,18 @@ import 'package:fynxfituser/providers/workout_provider.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/article/article_screen.dart';
 import 'package:fynxfituser/views/coach/coach_list_page.dart';
+import 'package:fynxfituser/views/home/search.dart';
 import 'package:fynxfituser/views/login/login.dart';
 import 'package:fynxfituser/views/workout/workout_screen.dart';
+import 'package:fynxfituser/widgets/customs/custom_text_field.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
 
 import '../../widgets/customs/custom_text.dart';
 
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
-
+HomeScreen({super.key});
+TextEditingController searchController=TextEditingController();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hoursProvider =
@@ -30,70 +32,146 @@ class HomeScreen extends ConsumerWidget {
     final authViewModel = ref.read(authProvider.notifier);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: SearchSession(),
-                    ),
-                    const Icon(Icons.notifications, color: Colors.white),
-                    sw10,
-                    LogOutSession(authViewModel: authViewModel),
-                  ],
-                ),
-              ),
-              const MotivationalText(),
-              ProgressCardSession(currentDate: currentDate, hours: hours),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        ref.read(workoutProvider.notifier).fetchWorkouts();
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            buildAppBar(context, authViewModel,ref),
+            ProgressCardSession(currentDate: currentDate, hours: hours),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      ref.read(workoutProvider.notifier).fetchWorkouts();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) {
+                        return const WorkoutListPage();
+                      }));
+                    },
+                    child: buildNavItem(
+                        Icons.fitness_center, 'Workout', Colors.purple[300]!),
+                  ),
+                  buildNavItem(
+                      Icons.insert_chart, 'Progress\nTracking', Colors.white),
+                  buildNavItem(
+                      Icons.restaurant_menu, 'Nutrition', Colors.white),
+                  InkWell(
+                      onTap: (){
                         Navigator.push(context,
                             MaterialPageRoute(builder: (ctx) {
-                          return const WorkoutListPage();
-                        }));
+                              return const CoachListPage();
+                            }));
                       },
-                      child: buildNavItem(
-                          Icons.fitness_center, 'Workout', Colors.purple[300]!),
-                    ),
-                    buildNavItem(
-                        Icons.insert_chart, 'Progress\nTracking', Colors.white),
-                    buildNavItem(
-                        Icons.restaurant_menu, 'Nutrition', Colors.white),
-                    InkWell(
-                        onTap: (){
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) {
-                                return const CoachListPage();
-                              }));
-                        },
-                        child: buildNavItem(Icons.people, 'Coaches', Colors.white)),
-                  ],
-                ),
+                      child: buildNavItem(Icons.people, 'Coaches', Colors.white)),
+                ],
               ),
-              const RecommendationsSession(),
-              if (articles.isEmpty) const CustomText(text: "No Articles Found"),
-              if (articles.isNotEmpty)
-                Cards(articles: articles),
-              const WeeklyChallenges()
-            ],
-          ),
+            ),
+            const RecommendationsSession(),
+            if (articles.isEmpty) const CustomText(text: "No Articles Found"),
+            if (articles.isNotEmpty)
+              Cards(articles: articles),
+            const WeeklyChallenges()
+          ],
         ),
       ),
     );
   }
+Widget buildAppBar(BuildContext context, AuthViewModel authViewModel, WidgetRef ref) {
+  final articles = ref.watch(articleProvider);
+  final workouts = ref.watch(workoutProvider);
+  return Container(
+    height: MediaQuery.of(context).size.height / 6,
+    width: MediaQuery.of(context).size.width,
+    decoration: BoxDecoration(
+      color: AppThemes.darkTheme.primaryColor,
+      gradient: LinearGradient(
+        colors: [Colors.black, AppThemes.darkTheme.primaryColor],
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+      ),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(onTap: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchPage()),
+          );
+        },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                height: 45.h,
+                width: MediaQuery.of(context).size.width / 1.5,
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Center(
+                  child: CustomText(
+                    text: 'Search Workouts, Articles..',color: AppThemes.darkTheme.scaffoldBackgroundColor,
 
-  Widget buildNavItem(IconData icon, String label, Color color) {
+                  ),
+                ),
+              ),
+
+              IconButton(
+                icon: const Icon(Icons.notifications, size: 20),
+                onPressed: () {},
+                tooltip: 'Notifications',
+                color: AppThemes.darkTheme.scaffoldBackgroundColor,
+              ),
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Confirm Logout"),
+                        content: const Text("Are you sure you want to logout?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await authViewModel.signOut();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              );
+                            },
+                            child: const Text("Logout"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        sh20,
+        const CustomText(
+          text: "It's time to challenge your limits.",
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildNavItem(IconData icon, String label, Color color) {
     return Column(
       children: [
         Container(
@@ -222,22 +300,16 @@ class Cards extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
-                            Text(
-                              item.subtitle,
-                              style: const TextStyle(
+                            CustomText(text:
+                            item.subtitle,
                                 color: Colors.grey,
-                                fontSize: 10,
-                              ),
                               maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 16),
-                            Text(
+                           sh10,
+                            CustomText(text:
                               item.createdAt.toString(),
-                              style: const TextStyle(
-                                fontSize: 10,
                                 color: Colors.grey,
-                              ),
+
                             ),
                           ],
                         ),
@@ -354,117 +426,6 @@ class ProgressCardSession extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MotivationalText extends StatelessWidget {
-  const MotivationalText({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.purple.shade900, Colors.purple.shade300],
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-        ),
-      ),
-      child: const Text(
-        "It's time to challenge your limits.",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-class LogOutSession extends StatelessWidget {
-  const LogOutSession({
-    super.key,
-    required this.authViewModel,
-  });
-
-  final AuthViewModel authViewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.logout),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Confirm Logout"),
-              content: const Text(
-                  "Are you sure you want to logout?"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pop();
-                  },
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(context)
-                        .pop();
-                    await authViewModel
-                        .signOut(); 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const LoginScreen()),
-                    ); // Navigate to LoginScreen
-                  },
-                  child: const Text("Logout"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-class SearchSession extends StatelessWidget {
-  const SearchSession({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, color: Colors.grey),
-          sw10,
-          CustomText(
-            text: 'Search for Workouts, Diet Plans...',
-            fontSize: 12.sp,
-            color: AppThemes.darkTheme.dividerColor,
           ),
         ],
       ),

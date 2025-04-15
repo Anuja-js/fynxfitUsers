@@ -1,38 +1,52 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/models/message.dar.dart';
+final messageViewModelProvider = FutureProvider<List<CoachChatModel>>((ref) async {
+  final firestore = FirebaseFirestore.instance;
+  final auth = FirebaseAuth.instance;
+  final currentUserId = auth.currentUser!.uid;
 
-class MessageUsersNotifier extends StateNotifier<List<MessageUser>> {
-  MessageUsersNotifier()
-      : super([
-    MessageUser(
-      name: "John Doe",
-      lastMessage: "Hey! How are you?",
-      profileImage:
-      "assets/images/im1.png",
-      lastMessageTime: DateTime.now().subtract(const Duration(minutes: 5)),
-    ),
-    MessageUser(
-      name: "Alice",
-      lastMessage: "Let's catch up later!",
-      profileImage:
-      "assets/images/im1.png",
-      lastMessageTime: DateTime.now().subtract(const Duration(hours: 1)),
-    ),
-    MessageUser(
-      name: "Bob",
-      lastMessage: "Meeting at 3 PM?",
-      profileImage:
-      "assets/images/im1.png",
-      lastMessageTime: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ]);
+  final coachesSnapshot = await firestore.collection('coaches').get();
 
-  void addUser(MessageUser user) {
-    state = [...state, user];
+  final List<CoachChatModel> chatModels = [];
+
+  for (var doc in coachesSnapshot.docs) {
+    final coachData = doc.data();
+    final chatId = "${currentUserId}_${doc.id}";
+
+    final messagesSnapshot = await firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+
+    String lastMessage = '';
+    DateTime? time;
+    bool isUnread = false;
+
+    if (messagesSnapshot.docs.isNotEmpty) {
+      final msgData = messagesSnapshot.docs.first.data();
+      lastMessage = msgData['text']?.toString() ?? '';
+      final timestamp = msgData['timestamp'];
+      time = (timestamp is Timestamp) ? timestamp.toDate() : null;
+
+      final readBy = (msgData['readBy'] as List?)?.cast<String>() ?? [];
+      isUnread = !readBy.contains(currentUserId);
+    }
+
+    chatModels.add(CoachChatModel(
+      id: doc.id,
+      name: coachData['name']?.toString() ?? 'Unnamed Coach',
+      profileImage: coachData['profileImage']?.toString() ?? '',
+      expertise: coachData['expertise']?.toString() ?? 'Unknown',
+      lastMessage: lastMessage,
+      lastMessageTime: time,
+      isUnread: isUnread, bio:coachData['bio']?.toString()??"", experience:coachData['experience']?.toString()??"", verified:coachData["verified"]??"false",
+    ));
   }
-}
 
-// Provider for Message Users List
-final messageUsersProvider =
-StateNotifierProvider<MessageUsersNotifier, List<MessageUser>>(
-        (ref) => MessageUsersNotifier());
+  return chatModels;
+});

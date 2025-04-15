@@ -59,8 +59,9 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged,
       onTap: onTap,
       decoration: InputDecoration(
-        hintText: hintText,labelText: labelText,labelStyle:TextStyle(color: Colors.grey, fontSize: fontSize.sp) ,
-        hintStyle: TextStyle(color: Colors.grey, fontSize: fontSize.sp),
+        hintText: hintText,labelText: labelText,
+        labelStyle:TextStyle(color: textColor, fontSize: fontSize.sp) ,
+        hintStyle: TextStyle(color: textColor, fontSize: fontSize.sp),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         border: border,

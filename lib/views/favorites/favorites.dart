@@ -8,8 +8,6 @@ import 'package:fynxfituser/views/article/article_detail_screen.dart';
 import 'package:fynxfituser/views/workout/workout_details_screen.dart';
 import 'package:fynxfituser/widgets/customs/custom_text.dart';
 
-
-
 class FavoritesScreen extends ConsumerStatefulWidget {
   final String userId;
 
@@ -19,8 +17,15 @@ class FavoritesScreen extends ConsumerStatefulWidget {
   _FavoritesScreenState createState() => _FavoritesScreenState();
 }
 
-class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
+class _FavoritesScreenState extends ConsumerState<FavoritesScreen> with SingleTickerProviderStateMixin {
   final FirestoreService firestoreService = FirestoreService();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   Future<void> removeFavorite(String itemId, bool isArticle) async {
     if (isArticle) {
@@ -28,7 +33,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     } else {
       await firestoreService.toggleWorkoutFavorite(widget.userId, itemId);
     }
-    ref.invalidate(favoritesProvider); // Refresh data after removal
+    ref.invalidate(favoritesProvider); // Refresh data
   }
 
   @override
@@ -36,7 +41,19 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     final favoritesAsync = ref.watch(favoritesProvider(widget.userId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Favorites')),
+      appBar: AppBar(
+        title: const Text('My Favorites'),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.orange,
+          labelColor: Colors.orange,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(text: 'Articles'),
+            Tab(text: 'Workouts'),
+          ],
+        ),
+      ),
       body: favoritesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => const Center(child: Text("Error loading favorites.")),
@@ -44,26 +61,15 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
           final articles = favorites['articles'] ?? [];
           final workouts = favorites['workouts'] ?? [];
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                buildSectionTitle('Favorite Articles'),
-                buildFavoritesList(articles, isArticle: true),
-                const SizedBox(height: 20),
-                buildSectionTitle('Favorite Workouts'),
-                buildFavoritesList(workouts, isArticle: false),
-              ],
-            ),
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              buildFavoritesList(articles, isArticle: true),
+              buildFavoritesList(workouts, isArticle: false),
+            ],
           );
         },
       ),
-    );
-  }
-
-  Widget buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.all(10.w),
-      child: CustomText(text: title, fontSize: 18.sp, fontWeight: FontWeight.bold),
     );
   }
 
@@ -72,72 +78,94 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
       return const Center(child: Text('No favorites found.'));
     }
 
-    return SizedBox(
-      height: 200,
-      child: ListView.builder(
-        itemCount: items.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          var item = items[index];
+    return ListView.builder(
+      itemCount: items.length,
+      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+      itemBuilder: (context, index) {
+        var item = items[index];
 
-          return Container(
-            margin: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-            decoration: BoxDecoration(
-              color: AppThemes.darkTheme.cardColor,
+        return Container(
+          margin: EdgeInsets.symmetric(vertical: 6.h),
+          decoration: BoxDecoration(
+            color: AppThemes.darkTheme.cardColor,
+            borderRadius: BorderRadius.circular(15.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(12.w),
+            leading: ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
+              child: Image.network(
+                item['imageUrl'] ?? item['thumbUrl'] ?? 'https://icon-library.com/images/empty-icon/empty-icon-19.jpg',
+                width: 60.w,
+                height: 60.h,
+                fit: BoxFit.cover,
+              ),
             ),
-            child: ListTile(
-              contentPadding: EdgeInsets.all(10.w),
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: Image.network(
-                  item['imageUrl'] ?? item['thumbUrl'] ?? 'https://icon-library.com/images/empty-icon/empty-icon-19.jpg',
-                  width: 50.w,
-                  height: 50.h,
-                  fit: BoxFit.cover,
+            title: CustomText(
+              text: item['title'] ?? 'No Title',
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            subtitle: item['subtitle'] != null
+                ? CustomText(
+              text: item['subtitle'],
+              fontSize: 12.sp,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey,
+            )
+                : null,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red, size: 20.sp),
+                  onPressed: () => removeFavorite(item['documentId'] ?? "", isArticle),
                 ),
-              ),
-              title: CustomText(text: item['title'] ?? 'No Title'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red, size: 20.sp),
-                    onPressed: () => removeFavorite(item['documentId'] ?? "", isArticle),
-                  ),
-                  Icon(Icons.arrow_forward_ios, size: 18.sp, color: Colors.grey),
-                ],
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => isArticle
-                        ? ArticleDetailPage(
-                      title: item["title"] ?? "",
-                      imageUrl: item["imageUrl"] ?? "",
-                      subtitle: item["subtitle"] ?? "",
-                      articleId: item["documentId"] ?? "",
-                    )
-                        : WorkoutDetailPage(
-                      title: item["title"] ?? "",
-                      videoUrl: item["videoUrl"] ?? "",
-                      videoDescription: item["subtitle"] ?? "",
-                      workoutId: item["documentId"] ?? "",
-                      userId: item["userId"] ?? "",
-                      advantages: item["advantages"] ?? "",
-                      intensity: item["intensity"] ?? "",
-                      muscle: item["muscle"] ?? "",
-                      sets: item["sets"] ?? "",
-                      repetitions: item["repetitions"] ?? "",
-                    ),
-                  ),
-                );
-              },
+                Icon(Icons.arrow_forward_ios, size: 16.sp, color: Colors.grey),
+              ],
             ),
-          );
-        },
-      ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => isArticle
+                      ? ArticleDetailPage(
+                    title: item["title"] ?? "",
+                    imageUrl: item["imageUrl"] ?? "",
+                    subtitle: item["subtitle"] ?? "",
+                    articleId: item["documentId"] ?? "",
+                  )
+                      : WorkoutDetailPage(
+                    title: item["title"] ?? "",
+                    videoUrl: item["videoUrl"] ?? "",
+                    videoDescription: item["subtitle"] ?? "",
+                    workoutId: item["documentId"] ?? "",
+                    userId: item["userId"] ?? "",
+                    advantages: item["advantages"] ?? "",
+                    intensity: item["intensity"] ?? "",
+                    muscle: item["muscle"] ?? "",
+                    sets: item["sets"] ?? "",
+                    repetitions: item["repetitions"] ?? "",
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

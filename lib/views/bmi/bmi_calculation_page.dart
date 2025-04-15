@@ -4,11 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/viewmodels/bmi_view_model.dart';
 
+import '../../core/utils/constants.dart';
 import '../../widgets/customs/custom_text.dart';
 
 class BMICalculatorPage extends ConsumerWidget {
-  final _heightController = TextEditingController();
-  final _weightController = TextEditingController();
+  final heightController = TextEditingController();
+  final weightController = TextEditingController();
 
   BMICalculatorPage({Key? key}) : super(key: key);
 
@@ -39,14 +40,14 @@ class BMICalculatorPage extends ConsumerWidget {
               ],
             ),
             TextField(
-              controller: _heightController,
+              controller: heightController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: bmiState.isHeightInInches ? "Height (in)" : "Height (cm)",
                 border: const OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            sh20,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -62,7 +63,7 @@ class BMICalculatorPage extends ConsumerWidget {
               ],
             ),
             TextField(
-              controller: _weightController,
+              controller: weightController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: bmiState.isWeightInLbs ? "Weight (lb)" : "Weight (kg)",
@@ -72,8 +73,9 @@ class BMICalculatorPage extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                double height = double.tryParse(_heightController.text) ?? 0;
-                double weight = double.tryParse(_weightController.text) ?? 0;
+                FocusManager.instance.primaryFocus?.unfocus();
+                double height = double.tryParse(heightController.text) ?? 0;
+                double weight = double.tryParse(weightController.text) ?? 0;
 
                 if (height > 0 && weight > 0) {
                   bmiNotifier.calculateBMI(height, weight);
@@ -85,16 +87,16 @@ class BMICalculatorPage extends ConsumerWidget {
               },
               child: const Text("Calculate BMI"),
             ),
-            const SizedBox(height: 20),
+           sh20,
             if (bmiState.bmi > 0)
               Column(
                 children: [
-                  Text(
+                  if(heightController.text.isNotEmpty&& weightController.text.isNotEmpty)     Text(
                     "Your BMI: ${bmiState.bmi.toStringAsFixed(2)}",
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+               if(heightController.text.isNotEmpty&& weightController.text.isNotEmpty)   Text(
                     "Category: ${bmiState.getCategory()}",
                     style: TextStyle(
                       fontSize: 18,

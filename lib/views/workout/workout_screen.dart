@@ -26,7 +26,7 @@ class WorkoutListPage extends ConsumerWidget {
         itemCount: workouts.length,
         itemBuilder: (context, index) {
           final WorkoutModel workout = workouts[index];
-          return WorkoutCard(workout: workout); // ✅ FIXED
+          return WorkoutCard(workout: workout); //  FIXED
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -55,7 +55,6 @@ class WorkoutListPage extends ConsumerWidget {
                       Navigator.pop(context);
                     },
                       title: Text(goal.title ?? "No Name"),
-                      // subtitle: Text(goal.description ?? "No Description"),
                     );
                   },
                 ),
@@ -100,7 +99,7 @@ class WorkoutCard extends StatelessWidget {
         margin: const EdgeInsets.all(8.0),
         elevation: 4,
         child: ListTile(
-          title: CustomText(text: workout.title ?? ""), // ✅ FIXED
+          title: CustomText(text: workout.title ?? ""), //  FIXED
           trailing: const Icon(Icons.play_circle_fill, color: Colors.blue),
         ),
       ),

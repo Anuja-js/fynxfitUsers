@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter/material.dart';
@@ -5,47 +7,68 @@ import 'package:flutter/material.dart';
 final paymentProvider = ChangeNotifierProvider((ref) => PaymentNotifier());
 
 class PaymentNotifier extends ChangeNotifier {
-  Razorpay? _razorpay;
+  Razorpay? razorpay;
 
   PaymentNotifier() {
-    _razorpay = Razorpay();
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    razorpay = Razorpay();
+    razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
+    razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
   }
 
-  void startPayment(String amount, String name, String contact, String email) {
+  void startPayment(String amount, String name, String contact, String email,) {
     var options = {
-      'key': 'rzp_test_4eiD32ejAydrAE', // Replace with your Razorpay Key
-      'amount': int.parse(amount) , // Amount in paisa
+      'key': 'rzp_test_4eiD32ejAydrAE', //Razorpay Key
+      'amount':(double.parse(amount) * 100).toInt(),
+
       'name': name,
       'description': 'Coach Subscription',
       'prefill': {'contact': contact, 'email': email},
     };
 
     try {
-      _razorpay!.open(options);
+      razorpay!.open(options);
     } catch (e) {
       debugPrint("Error: $e");
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    debugPrint("Payment Successful: ${response.paymentId}");
-    // Handle success (e.g., update DB, navigate)
-  }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
+  void handlePaymentSuccess(PaymentSuccessResponse response) async {
+    debugPrint("Payment Successful: ${response.paymentId}");
+
+    // Firestore instance
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DateTime expireDate = DateTime.now().add(Duration(days: 30));
+
+    try {
+      await firestore.collection('users').doc(userId).update({
+        'subscribe': true,
+        'expire_date': expireDate.toIso8601String(),
+      });
+
+      debugPrint("User subscription updated in Firestore.");
+    } catch (e) {
+      debugPrint("Error updating Firestore: $e");
+    }
+  }
+  void handlePaymentError(PaymentFailureResponse response) {
     debugPrint("Payment Failed: ${response.message}");
   }
 
-  void _handleExternalWallet(ExternalWalletResponse response) {
+  void handleExternalWallet(ExternalWalletResponse response) {
     debugPrint("External Wallet Used: ${response.walletName}");
   }
 
   @override
   void dispose() {
-    _razorpay?.clear();
+    razorpay?.clear();
     super.dispose();
   }
 }
+
+
+
+

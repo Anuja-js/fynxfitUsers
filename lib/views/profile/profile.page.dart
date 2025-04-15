@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,14 +10,21 @@ import '../../core/utils/constants.dart';
 import '../../viewmodels/profile_view_model.dart';
 import '../../widgets/customs/custom_text.dart';
 
-class ProfileScreen extends ConsumerWidget {
-  XFile? imageFile;
-   ProfileScreen({Key? key}) : super(key: key);
-  @override
+class ProfileScreen extends ConsumerStatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
-  Widget build(BuildContext context, WidgetRef ref) {
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  XFile? imageFile;
+
+  @override
+  Widget build(BuildContext context) {
     final profileState = ref.watch(profileViewModelProvider);
     final profileViewModel = ref.read(profileViewModelProvider.notifier);
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -34,12 +40,13 @@ class ProfileScreen extends ConsumerWidget {
                 sh10,
                 Stack(
                   children: [
-                    if(imageFile!=null)Image.file(File(imageFile!.path.toString())),
-                    if(imageFile==null) CircleAvatar(
-                        radius: 50.r,
-                        backgroundColor: AppThemes.darkTheme.primaryColor,
-                        backgroundImage:
-                             NetworkImage(profileState.profileImageUrl)),
+                    CircleAvatar(
+                      radius: 50.r,
+                      backgroundColor: AppThemes.darkTheme.primaryColor,
+                      backgroundImage: imageFile != null
+                          ? FileImage(File(imageFile!.path))
+                          : NetworkImage(profileState.profileImageUrl) as ImageProvider,
+                    ),
                     Positioned(
                       bottom: 30,
                       right: 0,
@@ -48,7 +55,7 @@ class ProfileScreen extends ConsumerWidget {
                         child: CircleAvatar(
                           radius: 11.r,
                           backgroundColor:
-                              AppThemes.darkTheme.appBarTheme.foregroundColor,
+                          AppThemes.darkTheme.appBarTheme.foregroundColor,
                           child: Icon(
                             Icons.camera_alt,
                             color: AppThemes.darkTheme.scaffoldBackgroundColor,
@@ -66,7 +73,7 @@ class ProfileScreen extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 CustomText(
-                  text:profileState.birthday.toString(),
+                  text: profileState.birthday?.toIso8601String() ?? 'N/A',
                   fontSize: 14,
                 ),
                 CustomText(
@@ -76,8 +83,9 @@ class ProfileScreen extends ConsumerWidget {
                 sh20,
                 Container(
                   decoration: BoxDecoration(
-                      color: Colors.purple.shade400,
-                      borderRadius: BorderRadius.circular(15)),
+                    color: Colors.purple.shade400,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -88,34 +96,23 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                buildCustomListTile("Profile", Icons.person,
-                    onLeadingPress: () {}, onTrailingPress: () {}),
-                buildCustomListTile("Favorite", Icons.favorite,
-                    onLeadingPress: () {}, onTrailingPress: () {}),
-                buildCustomListTile("Privacy Policy", Icons.lock,
-                    onLeadingPress: () {}, onTrailingPress: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext ctx) {
-                    return PrivacyPolicyPage();
-                  }));
+                buildCustomListTile("Profile", Icons.person),
+                buildCustomListTile("Favorite", Icons.favorite),
+                buildCustomListTile("Privacy Policy", Icons.lock, onTrailingPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+                  );
                 }),
-                buildCustomListTile("Transactions", Icons.monetization_on,
-                    onLeadingPress: () {}, onTrailingPress: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext ctx) {
-                    return TransactionHistoryPage();
-                  }));
+                buildCustomListTile("Transactions", Icons.monetization_on, onTrailingPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TransactionHistoryPage()),
+                  );
                 }),
-                buildCustomListTile("Settings", Icons.settings,
-                    onLeadingPress: () {}, onTrailingPress: () {}),
-                buildCustomListTile("Help", Icons.help,
-                    onLeadingPress: () {}, onTrailingPress: () {}),
-                buildCustomListTile(
-                  "Logout",
-                  Icons.logout_rounded,
-                  onLeadingPress: () {},
-                  onTrailingPress: () {},
-                ),
+                buildCustomListTile("Settings", Icons.settings),
+                buildCustomListTile("Help", Icons.help),
+                buildCustomListTile("Logout", Icons.logout_rounded),
               ],
             ),
           ),
@@ -124,38 +121,30 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget buildCustomListTile(String title, IconData leadingIcon,
-      {void Function()? onLeadingPress, void Function()? onTrailingPress}) {
+  Widget buildCustomListTile(String title, IconData icon,
+      {VoidCallback? onTrailingPress}) {
     return ListTile(
-      trailing: IconButton(
-        onPressed: onTrailingPress ?? () {},
-        icon: Icon(
-          Icons.chevron_right,
-          color: AppThemes.darkTheme.dividerColor,
-        ),
-      ),
-      title: CustomText(
-        text: title,
-        fontSize: 16,
-      ),
-      leading: GestureDetector(
-        onTap: onLeadingPress,
-        child: Container(
-          width: 30.w,
-          height: 30.h,
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: Colors.purple,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: Icon(
-            leadingIcon,
-            color: AppThemes.darkTheme.appBarTheme.foregroundColor,
-            size: 20,
-          ),
-        ),
-      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      leading: Container(
+        width: 30.w,
+        height: 30.h,
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.purple,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Icon(
+          icon,
+          size: 20,
+          color: AppThemes.darkTheme.appBarTheme.foregroundColor,
+        ),
+      ),
+      title: CustomText(text: title, fontSize: 16),
+      trailing: IconButton(
+        icon: Icon(Icons.chevron_right,
+            color: AppThemes.darkTheme.dividerColor),
+        onPressed: onTrailingPress ?? () {},
+      ),
     );
   }
 
@@ -163,8 +152,10 @@ class ProfileScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor:
-          AppThemes.darkTheme.scaffoldBackgroundColor.withOpacity(0.7),
-      isScrollControlled: true,
+      AppThemes.darkTheme.scaffoldBackgroundColor.withOpacity(0.7),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15.r)),
+      ),
       builder: (context) {
         return Container(
           padding: EdgeInsets.all(20.w),
@@ -177,27 +168,36 @@ class ProfileScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading:
-                    Icon(Icons.camera, color: AppThemes.darkTheme.primaryColor),
+                leading: Icon(Icons.camera,
+                    color: AppThemes.darkTheme.primaryColor),
                 title: CustomText(
                   text: "Take a Photo",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  // imageFile=await pickImage(ImageSource.camera, viewModel);
+                  final file = await ImagePicker().pickImage(source: ImageSource.camera);
+                  if (file != null) {
+                    setState(() => imageFile = file);
+                    // You can upload to Firebase here
+                    // viewModel.uploadProfileImage(file.path);
+                  }
                 },
               ),
               ListTile(
-                leading:
-                    Icon(Icons.image, color: AppThemes.darkTheme.primaryColor),
+                leading: Icon(Icons.image,
+                    color: AppThemes.darkTheme.primaryColor),
                 title: CustomText(
                   text: "Choose from Gallery",
                   color: AppThemes.darkTheme.scaffoldBackgroundColor,
                 ),
                 onTap: () async {
                   Navigator.pop(context);
-                  // imageFile=await pickImage(ImageSource.gallery, viewModel);
+                  final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  if (file != null) {
+                    setState(() => imageFile = file);
+                    // viewModel.uploadProfileImage(file.path);
+                  }
                 },
               ),
             ],

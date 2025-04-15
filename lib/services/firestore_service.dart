@@ -1,15 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../providers/fav_provider.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ValueNotifier<bool> isFavoriteNotifier = ValueNotifier(false);
 
-  /// 🏷 Toggle a favorite article in "favoriteList"
+  // Toggle a favorite article in "favoriteList"
   Future<void> toggleFavorite(String userId, String documentId) async {
     DocumentReference userRef = _firestore.collection('users').doc(userId);
     DocumentSnapshot userDoc = await userRef.get();
@@ -33,7 +29,7 @@ class FirestoreService {
     }
   }
 
-  /// 🏷 Check if an article is in "favoriteList"
+  //Check if an article is in "favoriteList"
   Future<bool> isFavorite(String userId, String documentId) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
 
@@ -44,7 +40,7 @@ class FirestoreService {
     return favoriteList.contains(documentId);
   }
 
-  /// 🏋️ Toggle a workout in "favoriteWorkouts"
+//toggleFav
   Future<void> toggleWorkoutFavorite(String userId, String workoutId) async {
     DocumentReference userRef = _firestore.collection('users').doc(userId);
     DocumentSnapshot userDoc = await userRef.get();
@@ -69,7 +65,7 @@ class FirestoreService {
     }
   }
 
-  /// 🏋️ Check if a workout is in "favoriteWorkouts"
+  // Check if a workout is in "favoriteWorkouts"
   Future<bool> checkWorkoutFavorite(String userId, String workoutId) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
     print(".................................................................");
@@ -83,7 +79,7 @@ class FirestoreService {
     return favoriteWorkouts.contains(workoutId);
   }
 
-  /// 📰 Fetch favorite articles with details
+  //Fetch favorite articles with details
   Future<List<Map<String, dynamic>>> getFavoriteArticlesWithDetails(String userId) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
 
@@ -103,7 +99,7 @@ class FirestoreService {
     return favoriteArticles;
   }
 
-  /// 🏋️ Fetch favorite workouts with details
+  // Fetch favorite workouts with details
   Future<List<Map<String, dynamic>>> getFavoriteWorkoutsWithDetails(String userId) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
 

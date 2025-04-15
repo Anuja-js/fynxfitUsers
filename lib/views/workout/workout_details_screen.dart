@@ -65,10 +65,9 @@ class _WorkoutDetailPageState extends ConsumerState<WorkoutDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black,
+      backgroundColor:AppThemes.darkTheme.scaffoldBackgroundColor,
+      appBar: AppBar( backgroundColor:AppThemes.darkTheme.scaffoldBackgroundColor,
+        title: CustomText(text: widget.title, fontWeight: FontWeight.bold,fontSize: 15.sp,),
         elevation: 0,
         actions: [
           ValueListenableBuilder<bool>(
@@ -103,7 +102,7 @@ class _WorkoutDetailPageState extends ConsumerState<WorkoutDetailPage> {
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppThemes.darkTheme.appBarTheme.foregroundColor!.withOpacity(0.2),
                     blurRadius: 5,
                     spreadRadius: 2,
                   ),
@@ -117,9 +116,9 @@ class _WorkoutDetailPageState extends ConsumerState<WorkoutDetailPage> {
                   child: VideoPlayer(controller),
                 ),
               )
-                  : Center(child: CircularProgressIndicator()),
+                  : const Center(child: CircularProgressIndicator()),
             ),
-            SizedBox(height: 16.h),
+          sh20,
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -141,7 +140,7 @@ class _WorkoutDetailPageState extends ConsumerState<WorkoutDetailPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+           sh20,
             buildInfoCard("Advantages", widget.advantages),
             buildInfoCard("Sets", widget.sets),
             buildInfoCard("Repetitions", widget.repetitions),
@@ -165,13 +164,12 @@ class _WorkoutDetailPageState extends ConsumerState<WorkoutDetailPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            CustomText(text:
               label,
-              style: TextStyle(
-                fontSize: 14.sp,overflow: TextOverflow.ellipsis,
+              fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.orangeAccent,
-              ),
+
             ),
           sw5,
             SizedBox(width: MediaQuery.of(context).size.width/2,

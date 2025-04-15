@@ -4,14 +4,16 @@ class CoachModel {
   final String profileImage;
   final String expertise;
   final String experience;
-  final String bio;
+  final String bio;  final bool verified;
 
   CoachModel({
     required this.id,
     required this.name,
-    required this.profileImage,   required this.bio,
+    required this.profileImage,
+    required this.bio,
     required this.expertise,
     required this.experience,
+    required this.verified,
   });
 
   // Convert Firestore document to CoachModel
@@ -23,6 +25,7 @@ class CoachModel {
       expertise: data['expertise'] ?? '',
     experience: data['experience'] ?? '',
     bio: data['bio'] ?? '',
+      verified: data['verified'] ?? false,
     );
   }
 }

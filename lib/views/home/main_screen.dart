@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/views/bmi/bmi_calculation_page.dart';
@@ -21,9 +23,44 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchInitialData();
+    requestPermission();
+    fetchInitialData();
+    getToken();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Foreground Message: ${message.notification?.title}");
+      // You can show a custom dialog or snackbar here
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("App opened from background: ${message.notification?.title}");
+      // Navigate to a specific screen, e.g. workout screen
+    });
   }
-  void _fetchInitialData() {
+  void getToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("FCM Token: $token");
+    await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
+"fcmtocken":token
+    }, SetOptions(merge: true));
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  void fetchInitialData() {
     ref.read(articleProvider.notifier).fetchArticles();
     ref.read(workoutProvider.notifier).fetchWorkouts();
   }
@@ -33,10 +70,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final currentIndex = ref.watch(bottomNavProvider);
 
     final List<Widget> screens = [
-      const HomeScreen(),
+      HomeScreen(),
      BMICalculatorPage(),
      FavoritesScreen(userId: FirebaseAuth.instance.currentUser!.uid),
-      MessagedUsersListScreen(),
+      MessagedCoachesListScreen(),
       ProfileScreen(),
 
     ];

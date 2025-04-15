@@ -21,8 +21,7 @@ class CoachListPage extends ConsumerWidget {
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(coach.profileImage),
-                  onBackgroundImageError: (_, __) =>
-                  const Icon(Icons.person, size: 40),
+                  onBackgroundImageError: (_, __) => const Icon(Icons.person, size: 40),
                 ),
                 title: Text(coach.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 subtitle: Text(coach.expertise, style: const TextStyle(fontSize: 14)),
@@ -42,6 +41,7 @@ class CoachListPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text("Error: $error")),
       ),
+
     );
   }
 }

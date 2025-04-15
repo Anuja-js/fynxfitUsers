@@ -7,7 +7,6 @@ class WorkoutNotifier extends StateNotifier<List<WorkoutModel>> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Fetch workout plans from Firestore
   Future<void> fetchWorkouts() async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -40,12 +39,22 @@ class WorkoutNotifier extends StateNotifier<List<WorkoutModel>> {
       }).toList();
 
       print("Fetched ${workouts.length} workouts for category: $category");
-      state = workouts; // 🔥 Update state with sorted & filtered workouts
+      state = workouts;
     } catch (e) {
       print("Error fetching workouts: $e");
       state=[];
     }
   }
+  void searchWorkouts(String query) {
+    final lowerQuery = query.toLowerCase();
+
+    state = state.where((workout) {
+      final name = workout.title.toLowerCase();
+      final description = workout.description.toLowerCase();
+      return name.contains(lowerQuery) || description.contains(lowerQuery);
+    }).toList();
+  }
+
 }
 
 // Provider for fetching workouts
