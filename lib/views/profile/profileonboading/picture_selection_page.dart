@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/theme.dart';
+import 'package:fynxfituser/viewmodels/auth_view_model.dart';
 import 'package:fynxfituser/viewmodels/profile_view_model.dart';
 import 'package:fynxfituser/views/home/main_screen.dart';
 import 'package:fynxfituser/widgets/customs/custom_elevated_button.dart';
@@ -13,6 +14,8 @@ class ProfileImageScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(isLoadingProvider);
+
     final imageState = ref.watch(profileImageViewModelProvider);
     final viewModels = ref.watch(profileViewModelProvider);
     final viewModel = ref.read(profileImageViewModelProvider.notifier);
@@ -85,7 +88,6 @@ class ProfileImageScreen extends ConsumerWidget {
                   text: "Skip",
                   onPressed: () async{  viewModels.copyWith(profileImageUrl:null );
                   final auth=await FirebaseAuth.instance.currentUser;
-                  // ref.read(profileViewModelProvider.notifier).uploadProfileImage(null);
                   ref.read(profileViewModelProvider.notifier).saveProfileData(auth!.uid);
 
                   Navigator.push(context, MaterialPageRoute(builder: (ctx){
@@ -94,27 +96,47 @@ class ProfileImageScreen extends ConsumerWidget {
                   },
                 ),
               ),
-            if (imageState.value!=null )
-              SizedBox(width: MediaQuery.of(context).size.width,
-                child: CustomElevatedButton(
+            if (imageState.value != null)
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomElevatedButton(
                   backgroundColor: AppThemes.darkTheme.primaryColor,
                   textColor: Colors.white,
                   text: "Next",
                   onPressed: () async {
-                  String? imageurl=  await viewModel.uploadImage();
-                  
-                    viewModels.copyWith(profileImageUrl:imageurl );
-                    
-                    final auth=await FirebaseAuth.instance.currentUser;
-                    ref.read(profileViewModelProvider.notifier).uploadProfileImage(imageurl!);
-                    ref.read(profileViewModelProvider.notifier).saveProfileData(auth!.uid);
-                    
-                    Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                      return MainScreen();
-                    }));
+                    ref.read(isLoadingProvider.notifier).state = true;
+
+                    try {
+                      String? imageUrl = await viewModel.uploadImage();
+
+                      viewModels.copyWith(profileImageUrl: imageUrl);
+
+                      final auth = await FirebaseAuth.instance.currentUser;
+                      if (imageUrl != null) {
+                        await ref.read(profileViewModelProvider.notifier).uploadProfileImage(imageUrl);
+                      }
+
+                      await ref.read(profileViewModelProvider.notifier).saveProfileData(auth!.uid);
+
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (ctx) => MainScreen()),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Error: ${e.toString()}")),
+                      );
+                    } finally {
+                      ref.read(isLoadingProvider.notifier).state = false;
+                    }
                   },
                 ),
               ),
+
           ],
         ),
       ),

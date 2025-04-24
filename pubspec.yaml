@@ -55,6 +55,7 @@ dependencies:
   webrtc_interface: 1.0.12
   firebase_messaging: any
   googleapis_auth: ^1.4.0
+  intl: ^0.18.1
 
 
 

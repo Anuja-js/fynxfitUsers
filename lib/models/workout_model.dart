@@ -13,6 +13,9 @@ class WorkoutModel {
   final String muscle;
   final String sets;
   final String repetitions;
+  final String workoutOption;
+  final String workoutPrice;
+
 
   WorkoutModel({
     required this.documentId,
@@ -26,7 +29,7 @@ class WorkoutModel {
     required this.repetitions,
     required this.muscle,
     required this.advantages,
-    required this.intensity,
+    required this.intensity,required this.workoutOption,required this.workoutPrice
   });
 
   /// Convert Firestore document to WorkoutModel
@@ -44,6 +47,8 @@ class WorkoutModel {
       muscle: json['muscle'] ?? '',
       advantages: json['advantages'] ?? '',
       intensity: json['intensity'] ?? '',
+workoutOption: json['workoutOption'] ?? '',
+workoutPrice: json['workoutPrice'] ?? '',
     );
   }
 
@@ -61,6 +66,8 @@ class WorkoutModel {
       'muscle': muscle,
       'advantages': advantages,
       'intensity': intensity,
+      "workoutOption":workoutOption,
+      "workoutPrice":workoutPrice,
     };
   }
 }

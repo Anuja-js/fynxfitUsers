@@ -102,26 +102,44 @@ class _EmailPasswordSignUpState extends ConsumerState<EmailPasswordSignUp> {
                   backgroundColor: AppThemes.darkTheme.primaryColor,
                   textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                   text: "Create Account",
-                  onPressed: () async{
-                    // Validate all fields in the form.
+                  onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                    await  authViewModel.signUpWithEmail(
-                        emailController.text,
-                        passwordController.text,
-                      );
-                      emailController.clear();
-                      passwordController.clear();
-                      confirmPasswordController.clear();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (BuildContext ctx) {
-                          return const LoginScreen();
-                        }),
-                      );
+                      ref.read(isLoadingProvider.notifier).state = true; // Show loader
+                      try {
+                        await authViewModel.signUpWithEmail(
+                          emailController.text,
+                          passwordController.text,
+                        );
+
+                        emailController.clear();
+                        passwordController.clear();
+                        confirmPasswordController.clear();
+
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (BuildContext ctx) => const LoginScreen()),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: ${e.toString()}')),
+                        );
+                      } finally {
+                        ref.read(isLoadingProvider.notifier).state = false; // Hide loader
+                      }
                     }
                   },
+
                 ),
               ),
+              if (isLoading)
+                Container(
+                  color: Colors.white.withOpacity(0.3),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
             ],
           ),
         ),

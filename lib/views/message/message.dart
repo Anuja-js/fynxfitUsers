@@ -11,7 +11,6 @@ class MessagedCoachesListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageState = ref.watch(messageViewModelProvider);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Coaches')),
       body: messageState.when(

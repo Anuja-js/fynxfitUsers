@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,7 @@ import 'package:fynxfituser/views/onboading/normal_onboarding/onboading_screeen.
 import 'package:fynxfituser/widgets/customs/custom_splash_icon.dart';
 import '../../viewmodels/splash_view_model.dart';
 import '../profile/profileonboading/profile_onboading.dart';
+
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
   @override
@@ -18,10 +21,9 @@ class SplashScreen extends ConsumerWidget {
       if (isFinished) {
         var user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          final bool isProfileComplete = await AuthViewModel().checkUserProfile(user.uid);
-
+          final bool isProfileComplete =
+              await AuthViewModel().checkUserProfile(user.uid);
           if (isProfileComplete) {
-            // Navigate to Main Page if onboarding is complete
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => MainScreen()),
@@ -30,13 +32,10 @@ class SplashScreen extends ConsumerWidget {
             AuthViewModel().resetUserData(user.uid);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ProfileOnboadingOne(userId: user.uid)),
+              MaterialPageRoute(
+                  builder: (context) => ProfileOnboadingOne(userId: user.uid)),
             );
           }
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => MainScreen()),
-          // );
         } else {
           Navigator.pushReplacement(
             context,

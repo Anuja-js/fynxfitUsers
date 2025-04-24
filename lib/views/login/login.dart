@@ -23,7 +23,7 @@ class LoginScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
-
+bool isLoading = false;
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,12 +31,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.read(authProvider.notifier);
+    final isLoading = ref.watch(isLoadingProvider);
+
     return Scaffold(
       backgroundColor: AppThemes.darkTheme.scaffoldBackgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+              child: Column(
+              children: [
+
             const CustomImages(image: "assets/images/welcome.png"),
             sh50,
             CustomText(
@@ -62,51 +66,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     sh10,
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: CustomElevatedButton(
-                        text: "Login",
-                        textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
-                        backgroundColor: AppThemes.darkTheme.primaryColor,
+                      child: CustomElevatedButton(backgroundColor: AppThemes.darkTheme.primaryColor,
+                        text: "Login",textColor: AppThemes.darkTheme.scaffoldBackgroundColor,
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
+                            ref.read(isLoadingProvider.notifier).state = true;
                             try {
-                           await   AuthViewModel().signInWithEmail(emailController.text,passwordController.text);
-                              // AuthViewModel().signInWithGoogle();
-                              final auth =
-                                await  FirebaseAuth.instance.currentUser;
-                              if (auth != null) {
-                                final bool isProfileComplete = await AuthViewModel().checkUserProfile(auth.uid);
-
-                                if (isProfileComplete) {
-                                  // Navigate to Main Page if onboarding is complete
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => MainScreen()),
-                                  );
-                                } else {
-                                  // Navigate to Profile Onboarding if incomplete
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => ProfileOnboadingOne(userId: auth.uid)),
-                                  );
-                                }
-                              } else {
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Invalid email or password"),
-                                    backgroundColor: Colors.red,
+                              await AuthViewModel().signInWithEmail(
+                                emailController.text,
+                                passwordController.text,
+                              );
+                              final user = FirebaseAuth.instance.currentUser;
+                              if (user != null) {
+                                final isComplete = await AuthViewModel().checkUserProfile(user.uid);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => isComplete
+                                        ? MainScreen()
+                                        : ProfileOnboadingOne(userId: user.uid),
                                   ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Invalid email or password")),
                                 );
                               }
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(e.toString())),
                               );
+                            } finally {
+                              ref.read(isLoadingProvider.notifier).state = false;
                             }
                           }
                         },
+                    ),), if (isLoading)
+                      const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
                     sh10,
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
@@ -144,13 +142,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     sh10,
                     const SignUpSession(),
                     sh20,
+
                   ],
                 ),
               ),
             ),
           ],
         ),
-      ),
+      ),]
+    )
     );
   }
 }

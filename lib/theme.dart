@@ -9,6 +9,7 @@ class AppThemes {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
     ),
+    dividerColor: Colors.grey,
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Colors.black),
       bodyMedium: TextStyle(color: Colors.black),
@@ -24,6 +25,7 @@ class AppThemes {
       backgroundColor: Colors.black,
       foregroundColor: Colors.white,
     ),
+    dividerColor: Colors.grey,
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Color(0xff6D6D6D)),

@@ -25,7 +25,6 @@ class PaymentNotifier extends ChangeNotifier {
       'description': 'Coach Subscription',
       'prefill': {'contact': contact, 'email': email},
     };
-
     try {
       razorpay!.open(options);
     } catch (e) {

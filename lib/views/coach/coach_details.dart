@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/models/coach_model.dart';
-import 'package:fynxfituser/models/message.dar.dart';
 import 'package:fynxfituser/providers/follow_provider.dart';
 import 'package:fynxfituser/providers/payment_provider.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/message/chat_screen.dart';
-import 'package:fynxfituser/views/message/message.dart';
 import 'package:fynxfituser/widgets/customs/custom_elevated_button.dart';
 import 'package:fynxfituser/widgets/customs/custom_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -141,21 +139,6 @@ class CoachDetailsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    FutureBuilder<int>(
-                      future: ref.read(followProvider).getFollowingCount(FirebaseAuth.instance.currentUser!.uid),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return const CircularProgressIndicator();
-                        return CustomText(
-                          text: '➡️ Following: ${snapshot.data}',
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
-                        );
-                      },
-                    ),
-                  ],
-                ),
               ],
             ),
             sh10,
@@ -163,7 +146,7 @@ class CoachDetailsPage extends ConsumerWidget {
             const Spacer(),
             FutureBuilder<bool>(
               future: ref
-                  .read(followProvider)
+                  .watch(followProvider)
                   .isFollowing(FirebaseAuth.instance.currentUser!.uid, coach.id),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const CircularProgressIndicator();
@@ -202,7 +185,7 @@ class CoachDetailsPage extends ConsumerWidget {
                 );
               },
             ),
-
+sh20,
             FutureBuilder<bool>(
               future: isUserSubscribed(FirebaseAuth.instance.currentUser!.uid),
               builder: (context, snapshot) {

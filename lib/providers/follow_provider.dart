@@ -28,7 +28,7 @@ class FollowNotifier extends ChangeNotifier {
         .set({'followedAt': Timestamp.now()});
 
     await _firestore
-        .collection('users')
+        .collection('coaches')
         .doc(coachId)
         .collection('followers')
         .doc(userId)
@@ -45,7 +45,7 @@ class FollowNotifier extends ChangeNotifier {
         .delete();
 
     await _firestore
-        .collection('users')
+        .collection('coaches')
         .doc(coachId)
         .collection('followers')
         .doc(userId)
@@ -55,7 +55,7 @@ class FollowNotifier extends ChangeNotifier {
 
   Future<int> getFollowersCount(String coachId) async {
     final snap = await _firestore
-        .collection('users')
+        .collection('coaches')
         .doc(coachId)
         .collection('followers')
         .get();
