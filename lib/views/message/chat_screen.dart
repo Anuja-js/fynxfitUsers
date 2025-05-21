@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/models/coach_model.dart';
@@ -9,17 +8,14 @@ import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/call/call_screen.dart';
 import 'package:fynxfituser/widgets/customs/custom_text.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:googleapis_auth/googleapis_auth.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:googleapis_auth/googleapis_auth.dart';
-import 'package:intl/intl.dart'; // For date formatting
+import 'package:intl/intl.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final CoachModel coach;
   final String userId;
 
-  ChatScreen({required this.coach, required this.userId});
+  const ChatScreen({super.key, required this.coach, required this.userId});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -29,16 +25,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String formatDate(DateTime date) {
     final now = DateTime.now();
-    final yesterday = now.subtract(Duration(days: 1));
-    if (isSameDay(date, now))
+    final yesterday = now.subtract(const Duration(days: 1));
+    if (isSameDay(date, now)) {
       return 'Today';
-    else if (isSameDay(date, yesterday))
+    } else if (isSameDay(date, yesterday)) {
       return 'Yesterday';
-    else
+    } else {
       return DateFormat('MMM d, yyyy').format(date);
+    }
   }
 
   bool isSameDay(DateTime date1, DateTime date2) {
@@ -93,11 +89,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   .orderBy("timestamp", descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                  return Center(child: CircularProgressIndicator());
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
-                  return Center(child: Text("No messages yet"));
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No messages yet"));
+                }
 
                 return ListView.builder(
                   reverse: true,
@@ -140,9 +138,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               ? Alignment.centerRight
                               : Alignment.centerLeft,
                           child: Container(
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 vertical: 5, horizontal: 10),
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             constraints: BoxConstraints(
                                 maxWidth:
                                     MediaQuery.of(context).size.width * 0.7),
@@ -195,7 +193,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.purple),
+                  icon: const Icon(Icons.send, color: Colors.purple),
                   onPressed: () {
                     sendMessage();
                     sendPushNotification(

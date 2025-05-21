@@ -45,7 +45,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       backgroundColor: AppThemes.darkTheme.primaryColor,
                       backgroundImage: imageFile != null
                           ? FileImage(File(imageFile!.path))
-                          : NetworkImage(profileState.profileImageUrl) as ImageProvider,
+                          : NetworkImage(profileState.profileImageUrl),
                     ),
                     Positioned(
                       bottom: 30,
@@ -76,11 +76,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   text: profileState.birthday?.toIso8601String() ?? 'N/A',
                   fontSize: 14,
                 ),
-                CustomText(
-                    text: 'anujas2002@gmail.com',
-                    fontSize: 14,
-                    color: AppThemes.darkTheme.dividerColor),
-                sh20,
+
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.purple.shade400,

@@ -1,0 +1,2 @@
+/home/anu/backup/ProjectsFlutter/fynxfitusers/android/app/.cxx/Debug/4j4q624h/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/anu/backup/ProjectsFlutter/fynxfitusers/android/app/.cxx/Debug/4j4q624h/armeabi-v7a/CMakeFiles/rebuild_cache.dir

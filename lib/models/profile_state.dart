@@ -11,8 +11,8 @@ class ProfileState {
     this.gender = "",
     this.name="",
     this.birthday,
-    this.weight = 75,
-    this.height = 165,
+    this.weight = 0,
+    this.height = 0,
     this.fitnessGoal = "",
     this.profileImageUrl = "",
   });

@@ -26,7 +26,7 @@ class SplashScreen extends ConsumerWidget {
           if (isProfileComplete) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
+              MaterialPageRoute(builder: (context) => const MainScreen()),
             );
           } else {
             AuthViewModel().resetUserData(user.uid);

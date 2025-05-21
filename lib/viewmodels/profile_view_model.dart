@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fynxfituser/providers/profile_provider.dart';
 import 'package:fynxfituser/repository/profile_repo.dart';
 import 'package:fynxfituser/viewmodels/auth_view_model.dart';
@@ -17,17 +17,17 @@ final profileViewModelProvider =
 );
 
 class ProfileViewModel extends StateNotifier<ProfileState> {
-  final UserRepository _userRepository = UserRepository();
+  final UserRepository userRepository = UserRepository();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   ProfileViewModel() : super(ProfileState());
 
   void updateGender(String gender,String name) => state = state.copyWith(gender: gender,name:name);
 
   Future<void> saveGenderToFirestore(String userId) async {
     final user = UserModel(uid: userId, gender: state.gender,name:state.name);
-    await _userRepository.update(user);
-    // await _userRepository.addUser(user);
+    await userRepository.update(user);
+    // await userRepository.addUser(user);
   }
 
   void updateBirthday(DateTime birthday) {
@@ -44,7 +44,7 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   Future<void> saveProfileData(String userId) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
+      await firestore.collection('users').doc(userId).update({
         'gender': state.gender,
         'birthday': state.birthday?.toIso8601String(),
         'weight': state.weight,
@@ -70,7 +70,7 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   Future<void> saveHeightToFirestore(String userId) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
+      await firestore.collection('users').doc(userId).update({
         'height': state.height,
       });
     } catch (e) {
@@ -81,7 +81,7 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
   Future<UserModel?> getUserDetails(String userId) async {
     try {
       DocumentSnapshot doc =
-          await _firestore.collection('users').doc(userId).get();
+          await firestore.collection('users').doc(userId).get();
 
       if (doc.exists) {
         var data = UserModel.fromJson(doc.data() as Map<String, dynamic>);

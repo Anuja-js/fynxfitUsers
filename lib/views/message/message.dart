@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fynxfituser/core/utils/constants.dart';
 import 'package:fynxfituser/models/message.dar.dart';
 import 'package:fynxfituser/providers/message_provider.dart';
+import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/views/message/chat_screen.dart';
+import 'package:fynxfituser/widgets/customs/custom_text.dart';
 
 class MessagedCoachesListScreen extends ConsumerWidget {
   const MessagedCoachesListScreen({Key? key}) : super(key: key);
@@ -11,17 +15,38 @@ class MessagedCoachesListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageState = ref.watch(messageViewModelProvider);
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text('Coaches')),
+      backgroundColor: isDarkMode
+          ? AppThemes.darkTheme.scaffoldBackgroundColor
+          : AppThemes.lightTheme.scaffoldBackgroundColor,
+      appBar: AppBar(
+          elevation: 0,
+          backgroundColor: isDarkMode
+              ? AppThemes.darkTheme.scaffoldBackgroundColor
+              : AppThemes.lightTheme.scaffoldBackgroundColor,
+          title: CustomText(
+            text: 'Coaches',
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode
+                ? AppThemes.lightTheme.scaffoldBackgroundColor
+                : AppThemes.darkTheme.scaffoldBackgroundColor,
+          )),
       body: messageState.when(
         data: (coaches) {
-          // Filter for only verified coaches
-          final verifiedCoaches = coaches.where((coach) => coach.verified).toList();
-
+          final verifiedCoaches =
+              coaches.where((coach) => coach.verified).toList();
           if (verifiedCoaches.isEmpty) {
-            return const Center(child: Text('No verified coaches found.'));
+            return Center(
+                child: CustomText(
+              text: 'No verified coaches found.',
+              color: isDarkMode
+                  ? AppThemes.lightTheme.scaffoldBackgroundColor
+                  : AppThemes.darkTheme.scaffoldBackgroundColor,
+            ));
           }
-
           return ListView.builder(
             itemCount: verifiedCoaches.length,
             itemBuilder: (context, index) {
@@ -29,22 +54,26 @@ class MessagedCoachesListScreen extends ConsumerWidget {
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(coach.profileImage),
-                  onBackgroundImageError: (_, __) => const Icon(Icons.person, size: 40),
+                  onBackgroundImageError: (_, __) =>
+                      const Icon(Icons.person, size: 40),
                 ),
                 title: Text(
                   coach.name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      coach.lastMessage.isNotEmpty ? coach.lastMessage : 'No messages yet',
+                      coach.lastMessage.isNotEmpty
+                          ? coach.lastMessage
+                          : 'No messages yet',
                       style: const TextStyle(fontSize: 14),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    sh5,
                     Text(
                       coach.lastMessageTime != null
                           ? _formatTime(coach.lastMessageTime!)
@@ -54,8 +83,16 @@ class MessagedCoachesListScreen extends ConsumerWidget {
                   ],
                 ),
                 trailing: coach.isUnread
-                    ? const Icon(Icons.mark_chat_unread, color: Colors.red)
-                    : const Icon(Icons.mark_chat_read, color: Colors.green),
+                    ? Icon(
+                        Icons.circle,
+                        color: Colors.red,
+                        size: 12.sp,
+                      )
+                    : Icon(
+                        Icons.check,
+                        color: Colors.green,
+                        size: 12.sp,
+                      ),
                 onTap: () {
                   Navigator.push(
                     context,

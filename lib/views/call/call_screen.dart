@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:fynxfituser/providers/signaling_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class UserCallScreen extends ConsumerStatefulWidget {
   final String coachId;
@@ -20,117 +19,73 @@ class UserCallScreen extends ConsumerStatefulWidget {
 }
 
 class _UserCallScreenState extends ConsumerState<UserCallScreen> {
-  late final String callId;
+  late String userId;
+  late String userName;
+  late String roomId;
+  bool isReady = false;
 
   @override
   void initState() {
     super.initState();
-    callId = FirebaseAuth.instance.currentUser!.uid +
-        widget.coachId +
-        DateTime.now().toIso8601String();
-    _startCall();
+    setupCall();
   }
 
-  Future<void> _startCall() async {
-    final signaling = ref.read(signalingProvider);
+  Future<void> setupCall() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    userId = currentUser?.uid ?? 'guest_${DateTime.now().millisecondsSinceEpoch}';
+    userName = currentUser?.displayName ?? 'User';
+    roomId = generateRoomID(userId, widget.coachId);
 
-    await signaling.initialize(isVideo: true, callId: callId);
-    await signaling.makeCall(
-      callId,
-      receiverId: widget.coachId,
-      isVideo: true,
-      callerId: FirebaseAuth.instance.currentUser!.uid,
+    // Request permissions
+    await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+
+    // Initialize Zego
+    ZegoUIKit().init(
+      appID: 2141926597,
+      appSign: "0e3dcf791edb2de436b05850732ece53c4b5809a0956a62fc07c302978f1d089",
     );
 
-    // Create call document in Firestore
-    await FirebaseFirestore.instance.collection('calls').doc(callId).set({
-      'callerId': FirebaseAuth.instance.currentUser!.uid,
-      'receiverId': widget.coachId,
-      'isVideo': true,
-      'hasJoined': false,
-      'createdAt': FieldValue.serverTimestamp(),
+    // Update state
+    setState(() {
+      isReady = true;
     });
+  }
+
+  String generateRoomID(String id1, String id2) {
+    final sorted = [id1, id2]..sort();
+    return sorted.join('_');
   }
 
   @override
   Widget build(BuildContext context) {
-    final signaling = ref.read(signalingProvider);
+    if (!isReady) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("Calling...")),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('calls')
-            .doc(callId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          final doc = snapshot.data;
+    return ZegoUIKitPrebuiltCall(
+      appID: 2141926597,
+      appSign: "0e3dcf791edb2de436b05850732ece53c4b5809a0956a62fc07c302978f1d089",
+      userID: userId,
+      userName: userName,
+      callID: roomId,
+      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(
 
-          // Wait for Firestore to initialize
-          if (!snapshot.hasData || !doc!.exists) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      )..layout = ZegoLayout.pictureInPicture()
+        // mode: ZegoLayoutMode.pictureInPicture,
+        // smallViewPosition: ZegoViewPosition.topRight,
+        // smallViewSize: Size(120, 160),
 
-          final hasJoined = doc['hasJoined'] ?? false;
-
-          return Stack(
-            children: [
-              !hasJoined || signaling.remoteRenderer.srcObject == null
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(widget.image),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "Waiting for coach to join...",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              )
-                  : RTCVideoView(
-                signaling.remoteRenderer,
-                objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                mirror: true,
-              ),
-              Positioned(
-                right: 16,
-                top: 16,
-                child: Container(
-                  width: 120,
-                  height: 160,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: RTCVideoView(signaling.localRenderer, mirror: true),
-                ),
-              ),
-              Positioned(
-                bottom: 30,
-                left: MediaQuery.of(context).size.width * 0.4,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.red,
-                  child: const Icon(Icons.call_end),
-                  onPressed: () async {
-                    await signaling.disposeResources();
-                    await FirebaseFirestore.instance
-                        .collection('calls')
-                        .doc(callId)
-                        .delete();
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
+        ..avatarBuilder = (context, size, user, extraInfo) {
+          return CircleAvatar(
+            backgroundImage: NetworkImage(widget.image),
+            radius: size.width / 2,
           );
         },
-      ),
     );
   }
 }

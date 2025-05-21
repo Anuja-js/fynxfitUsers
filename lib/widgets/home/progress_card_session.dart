@@ -3,8 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/core/utils/constants.dart';
 import 'package:fynxfituser/theme.dart';
 import 'package:fynxfituser/widgets/customs/custom_text.dart';
-import 'package:fynxfituser/widgets/home/chart_data.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+// import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProgressCardSession extends StatelessWidget {
   const ProgressCardSession({
@@ -39,28 +38,28 @@ class ProgressCardSession extends StatelessWidget {
 
           ),
           sh10,
-          SizedBox(
-            height: 200.h,
-            child: SfCartesianChart(
-              primaryXAxis: CategoryAxis(),
-              primaryYAxis: NumericAxis(
-                minimum: 0,
-                maximum: 5,
-                interval: 1,
-              ),
-              series: <ChartSeries>[
-                LineSeries<ChartData, String>(
-                  dataSource: List.generate(hours.length, (index) {
-                    return ChartData((index + 12).toString(), hours[index]);
-                  }),
-                  xValueMapper: (ChartData data, _) => data.day,
-                  yValueMapper: (ChartData data, _) => data.hours,
-                  color: AppThemes.darkTheme.primaryColor,
-                  markerSettings: const MarkerSettings(isVisible: true),
-                ),
-              ],
-            ),
-          ),
+          // SizedBox(
+          //   height: 200.h,
+          //   child: SfCartesianChart(
+          //     primaryXAxis: CategoryAxis(),
+          //     primaryYAxis: NumericAxis(
+          //       minimum: 0,
+          //       maximum: 5,
+          //       interval: 1,
+          //     ),
+          //     // series: <ChartSeries>[
+          //     //   LineSeries<ChartData, String>(
+          //     //     dataSource: List.generate(hours.length, (index) {
+          //     //       return ChartData((index + 12).toString(), hours[index]);
+          //     //     }),
+          //     //     xValueMapper: (ChartData data, _) => data.day,
+          //     //     yValueMapper: (ChartData data, _) => data.hours,
+          //     //     color: AppThemes.darkTheme.primaryColor,
+          //     //     markerSettings: const MarkerSettings(isVisible: true),
+          //     //   ),
+          //     // ],
+          //   ),
+          // ),/
         ],
       ),
     );
