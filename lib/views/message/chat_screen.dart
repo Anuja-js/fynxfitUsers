@@ -11,6 +11,8 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
+import '../call/audio_call.dart';
+
 class ChatScreen extends ConsumerStatefulWidget {
   final CoachModel coach;
   final String userId;
@@ -60,9 +62,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: AppThemes.darkTheme.appBarTheme.foregroundColor),
             tooltip: 'Audio Call',
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Audio Call Pressed')),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                return UserAudioCallScreen(
+                    coachId: widget.coach.id, image: widget.coach.profileImage);
+              }));
             },
           ),
           IconButton(

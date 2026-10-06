@@ -16,7 +16,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
   final PageController pageController = PageController();
   final String userId;
 
-  ProfileOnboadingOne({Key? key, required this.userId}) : super(key: key);
+  ProfileOnboadingOne({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +37,7 @@ class ProfileOnboadingOne extends ConsumerWidget {
               WeightScreen(controller: pageController),
               HeightScreen(controller: pageController),
               FitnessGoalsScreen(controller: pageController),
-             ProfileImageScreen(),
+             const ProfileImageScreen(),
             ],
           ),
           Positioned(

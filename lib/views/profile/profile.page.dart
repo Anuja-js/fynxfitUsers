@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fynxfituser/theme.dart';
+import 'package:fynxfituser/views/call/call_history.dart';
 import 'package:fynxfituser/views/profile/privacy/privacy_policy.dart';
 import 'package:fynxfituser/views/profile/transactions/transactions_history_page.dart';
 import 'package:image_picker/image_picker.dart';
@@ -104,6 +106,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const TransactionHistoryPage()),
+                  );
+                }),
+                buildCustomListTile("Call History", Icons.monetization_on, onTrailingPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) =>  CallHistoryPage(userId: FirebaseAuth.instance.currentUser!.uid,)),
                   );
                 }),
                 buildCustomListTile("Settings", Icons.settings),

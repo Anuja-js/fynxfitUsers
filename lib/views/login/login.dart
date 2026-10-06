@@ -83,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => isComplete
-                                        ? MainScreen()
+                                        ? const MainScreen()
                                         : ProfileOnboadingOne(userId: user.uid),
                                   ),
                                 );
@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               // Navigate to Main Page if onboarding is complete
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => MainScreen()),
+                                MaterialPageRoute(builder: (context) => const MainScreen()),
                               );
                             } else {
                               await AuthViewModel().resetUserData(auth.uid);

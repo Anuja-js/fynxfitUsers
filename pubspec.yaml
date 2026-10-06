@@ -51,7 +51,7 @@ dependencies:
   file_picker: ^10.1.9
   video_player: ^2.9.3
   razorpay_flutter: ^1.4.0
-#  flutter_webrtc: ^0.9.19
+  flutter_webrtc: ^0.14.2
 #  webrtc_interface: 1.0.12
 #  jitsi_meet_flutter_sdk: ^11.1.1
   zego_uikit_prebuilt_call: ^4.16.29

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FirestoreService {
@@ -27,6 +28,23 @@ class FirestoreService {
         'favoriteList': FieldValue.arrayUnion([documentId])
       });
     }
+  }
+  Future<void> addCallHistory({
+    required String userId,
+    required Map<String, dynamic> callData,
+  }) async {
+    final user =FirebaseAuth.instance.currentUser!.uid.toString();
+    DocumentReference userRef = _firestore.collection('users').doc(user);
+    DocumentSnapshot userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      // Initialize user document if it doesn't exist
+      await userRef.set({'callHistory': []}, SetOptions(merge: true));
+    }
+
+    await userRef.update({
+      'callHistory': FieldValue.arrayUnion([callData])
+    });
   }
 
   //Check if an article is in "favoriteList"

@@ -99,7 +99,7 @@ class Cards extends StatelessWidget {
                                     color:AppThemes.darkTheme.dividerColor,
                                     maxLines: 3,
                                   ),
-                                  sh10,
+                                  sh5,
                                   CustomText(
                                     text:  DateFormat('dd/MM/yyyy').format(item.createdAt),
                                     color: AppThemes.darkTheme.dividerColor,

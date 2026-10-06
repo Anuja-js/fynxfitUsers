@@ -48,7 +48,8 @@ class SplashScreen extends ConsumerWidget {
       backgroundColor: isDarkMode
           ? AppThemes.darkTheme.scaffoldBackgroundColor
           : AppThemes.lightTheme.scaffoldBackgroundColor,
-      body: const Center(child: IconSplashImage()),
+      body: const Center(child: IconSplashImage()
+     ),
     );
   }
 }
